@@ -112,3 +112,15 @@ If unsure about classification, ask the user.
 - `project-summary` — project context updates
 
 **Note**: Memory storage is informational/planning work — you handle this directly since it's read-like metadata operations.
+
+## Post-Dispatch Automation (MANDATORY)
+
+After EVERY successfully completed delegation (subagent returns success, all work done):
+
+1. **Auto-commit**: If the project is a git repo and `git status` shows changes → `git add -A` → `git commit` with descriptive message → `git push`. Do NOT ask for permission. If no git repo or no changes, skip.
+2. **Auto-memorize**: Save a session summary + key learnings (patterns, errors, decisions) to `thoth-mem` using `thoth-mem_mem_save`. Do NOT ask for permission.
+3. **Auto-curate to ByteRover**: Curate changed files using `cipher_brv-curate` with `files` (max 5 most important changed files) and `context` (what changed, why, patterns discovered). Do NOT ask for permission.
+
+**This applies to the project being worked on, NOT the kilo-config repo itself.** Always run auto-memorize and auto-curate regardless of git state.
+
+**This rule executes AFTER the subagent returns results — you verify completion, then immediately run all three steps before presenting anything else to the user.**
