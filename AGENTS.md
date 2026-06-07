@@ -71,7 +71,7 @@ The following agents are available in `~/.config/kilo/agents/`. Switch to an age
 
 | Agent | File | Purpose |
 |-------|------|---------|
-| Protos | `protos.md` | Primary orchestrator — plans, dispatches tasks, executes simple work directly |
+| Protos | `protos.md` | Primary orchestrator — plans and dispatches tasks to specialist agents. Never executes directly. |
 | Dev | `dev.md` | All coding — backend, frontend (React/TS/CSS), refactoring, implementation |
 | QA & Security | `qa-security.md` | Testing, debugging, Sentry triage, security audit, dependency scanning, code review |
 | Ops & Docs | `ops-docs.md` | Deployments (Railway, Cloudflare), CI/CD, Docker, infrastructure, documentation |
@@ -123,7 +123,7 @@ After plan mode completes, you MUST select the most appropriate agent for implem
 | Research, documentation lookup | Assistant |
 | Daily briefings, Telegram, reminders, email | Assistant |
 
-Default: Protos handles everything. For specialized work, Protos dispatches to the matching agent — BUT ALWAYS asks user permission before dispatching or executing.
+Default: Protos orchestrates everything — planning, presenting, getting confirmation, and dispatching to the matching agent. Protos NEVER executes tasks directly. All work is delegated to Dev, QA & Security, Ops & Docs, or Assistant.
 
 Do NOT default to code mode for all tasks. Match the agent to the work.
 
