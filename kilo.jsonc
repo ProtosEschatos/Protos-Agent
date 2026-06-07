@@ -47,7 +47,27 @@
     "cipher_brv-query": "allow",
     "thoth-mem_store_memory": "allow",
     "thoth-mem_search_memory": "allow",
-    "thoth-mem_list_memories": "allow"
+    "thoth-mem_list_memories": "allow",
+    "firecrawl_scrape": "allow",
+    "firecrawl_crawl": "allow",
+    "firecrawl_check_crawl_status": "allow",
+    "firecrawl_map": "allow",
+    "firecrawl_search": "allow",
+    "firecrawl_search_feedback": "allow",
+    "firecrawl_extract": "allow",
+    "firecrawl_parse": "allow",
+    "firecrawl_interact": "allow",
+    "firecrawl_interact_stop": "allow",
+    "firecrawl_agent": "allow",
+    "firecrawl_agent_status": "allow",
+    "firecrawl_monitor_create": "allow",
+    "firecrawl_monitor_list": "allow",
+    "firecrawl_monitor_get": "allow",
+    "firecrawl_monitor_update": "allow",
+    "firecrawl_monitor_delete": "allow",
+    "firecrawl_monitor_run": "allow",
+    "firecrawl_monitor_checks": "allow",
+    "firecrawl_monitor_check": "allow"
   },
   "mcp": {
     "github": {
@@ -156,11 +176,51 @@
       "enabled": true,
       "timeout": 60000,
       "type": "local"
+    },
+    "firecrawl": {
+      "command": "npx",
+      "args": ["-y", "firecrawl-mcp"],
+      "environment": {
+        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}"
+      },
+      "enabled": true,
+      "timeout": 120000,
+      "type": "local"
     }
   },
+  "default_agent": "protos",
   "agent": {
     "protos": {
       "model": "deepseek/deepseek-v4-pro"
+    },
+    "plan": {
+      "model": "deepseek/deepseek-v4-pro"
+    },
+    "debug": {
+      "model": "deepseek/deepseek-v4-pro"
+    },
+    "orchestrator": {
+      "model": "deepseek/deepseek-v4-pro"
+    },
+    "ask": {
+      "model": "deepseek/deepseek-v4-pro"
+    },
+    "assistant": {
+      "model": "deepseek/deepseek-v4-pro"
+    },
+    "code": {
+      "model": "deepseek/deepseek-v4-pro"
+    },
+    "dev": {
+      "model": "deepseek/deepseek-v4-pro"
+    },
+    "ops-docs": {
+      "model": "deepseek/deepseek-v4-pro"
+    },
+    "qa-security": {
+      "model": "deepseek/deepseek-v4-pro"
     }
-  }
+  },
+  "subagent_model": "deepseek/deepseek-v4-pro",
+  "subagent_variant": "max"
 }

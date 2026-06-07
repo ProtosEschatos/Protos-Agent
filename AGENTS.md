@@ -71,17 +71,11 @@ The following agents are available in `~/.config/kilo/agents/`. Switch to an age
 
 | Agent | File | Purpose |
 |-------|------|---------|
-| Protos | `protos.md` | Primary agent — plans, dispatches tasks, executes simple work directly |
-| Implementer | `implementer.md` | General implementation — coding, testing, execution |
-| Frontend Engineer | `frontend-engineer.md` | UI/UX design + React/TypeScript/CSS implementation |
-| QA Engineer | `qa-engineer.md` | Writing tests, debugging failures, log analysis, Sentry triage |
-| Docs Writer | `docs-writer.md` | READMEs, API docs, ADRs, changelogs, all markdown documentation |
-| DevOps Engineer | `devops-engineer.md` | Deployments, CI/CD, Docker, Railway, Cloudflare |
-| Security Auditor | `security-auditor.md` | Security review, dependency audit, secret scanning |
-| Code Reviewer | `code-reviewer.md` | PR/code review, quality analysis, best practices |
-| Code Simplifier | `code-simplifier.md` | Simplify and refactor code without changing behavior |
-| Researcher | `researcher.md` | Web research, documentation lookup, technical analysis |
-| Personal Assistant | `personal-assistant.md` | Daily briefings, Telegram, reminders, email |
+| Protos | `protos.md` | Primary orchestrator — plans, dispatches tasks, executes simple work directly |
+| Dev | `dev.md` | All coding — backend, frontend (React/TS/CSS), refactoring, implementation |
+| QA & Security | `qa-security.md` | Testing, debugging, Sentry triage, security audit, dependency scanning, code review |
+| Ops & Docs | `ops-docs.md` | Deployments (Railway, Cloudflare), CI/CD, Docker, infrastructure, documentation |
+| Assistant | `assistant.md` | Research, documentation lookup, daily briefings, Telegram, email, notifications |
 
 ## Custom Commands
 
@@ -89,15 +83,15 @@ Commands are defined in `~/.config/kilo/command/`. Each command triggers a speci
 
 | Command | Agent | Purpose |
 |---------|-------|---------|
-| `/deploy` | DevOps Engineer | Build → test → deploy to Railway → notify |
-| `/review` | Code Reviewer | Review git diff and produce structured report |
-| `/daily` | Personal Assistant | Daily briefing from GitHub, Sentry, Telegram, Railway |
-| `/security-scan` | Security Auditor | Vulnerability scan and security report |
-| `/research <query>` | Researcher | Web research with sources and recommendations |
-| `/docs` | Docs Writer | Generate or update documentation |
-| `/debug <issue>` | QA Engineer | Analyze Sentry errors or stack traces |
+| `/deploy` | Ops & Docs | Build → test → deploy to Railway → notify |
+| `/review` | QA & Security | Review git diff and produce structured report |
+| `/daily` | Assistant | Daily briefing from GitHub, Sentry, Telegram, Railway |
+| `/security-scan` | QA & Security | Vulnerability scan and security report |
+| `/research <query>` | Assistant | Web research with sources and recommendations |
+| `/docs` | Ops & Docs | Generate or update documentation |
+| `/debug <issue>` | QA & Security | Analyze Sentry errors or stack traces |
 | `/notify <message>` | — | Send Telegram message (confirms first) |
-| `/design <description>` | Frontend Engineer | Iterative visual design workflow with Polygram canvas |
+| `/design <description>` | Dev | Iterative visual design workflow with Polygram canvas |
 | `/run-plan <plan>` | Protos | Parse plan and dispatch tasks to matching agents |
 
 ## Skills
@@ -118,15 +112,16 @@ After plan mode completes, you MUST select the most appropriate agent for implem
 
 | Task Type | Agent |
 |-----------|-------|
-| UI/UX design, HTML/CSS, React/TS implementation, visual polish | Frontend Engineer |
-| Backend, API, database, general implementation | Implementer |
-| Code simplification, refactoring, cleanup | Code Simplifier |
-| Writing tests, debugging failures, log/Sentry analysis | QA Engineer |
-| Security auditing, dependency scanning | Security Auditor |
-| Documentation, README, ADRs, changelogs, markdown | Docs Writer |
-| Deployments, CI/CD, Railway, Cloudflare | DevOps Engineer |
-| Research, documentation lookup | Researcher |
-| Code review, quality analysis | Code Reviewer |
+| UI/UX design, HTML/CSS, React/TS implementation, visual polish | Dev |
+| Backend, API, database, general implementation | Dev |
+| Code simplification, refactoring, cleanup | Dev |
+| Writing tests, debugging failures, log/Sentry analysis | QA & Security |
+| Security auditing, dependency scanning | QA & Security |
+| Code review, quality analysis | QA & Security |
+| Deployments, CI/CD, Railway, Cloudflare | Ops & Docs |
+| Documentation, README, ADRs, changelogs, markdown | Ops & Docs |
+| Research, documentation lookup | Assistant |
+| Daily briefings, Telegram, reminders, email | Assistant |
 
 Default: Protos handles everything. For specialized work, Protos dispatches to the matching agent — BUT ALWAYS asks user permission before dispatching or executing.
 
