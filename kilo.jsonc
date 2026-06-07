@@ -168,9 +168,8 @@
       "type": "local"
     },
     "duckduckgo-search": {
-      "command": "uvx",
-      "args": ["duckduckgo-mcp-server"],
-      "env": {
+      "command": ["uvx", "duckduckgo-mcp-server"],
+      "environment": {
         "DDG_SAFE_SEARCH": "MODERATE"
       },
       "enabled": true,
