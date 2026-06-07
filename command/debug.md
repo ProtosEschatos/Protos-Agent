@@ -1,6 +1,6 @@
 # /debug
 
-Trigger: QA Engineer agent
+Trigger: QA & Security agent
 
 Systematic debugging workflow:
 1. Fetch error details from Sentry (if available)

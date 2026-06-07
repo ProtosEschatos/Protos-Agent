@@ -1,6 +1,6 @@
 # /security-scan
 
-Trigger: Security Auditor agent
+Trigger: QA & Security agent
 
 Audits the current codebase for:
 - Hardcoded secrets and exposed credentials

@@ -1,6 +1,6 @@
 # /research
 
-Trigger: Researcher agent
+Trigger: Assistant agent
 
 Researches a topic using:
 - DuckDuckGo Search for current information

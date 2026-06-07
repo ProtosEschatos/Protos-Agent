@@ -1,6 +1,6 @@
 # /daily
 
-Trigger: Personal Assistant agent
+Trigger: Assistant agent
 
 Produces a daily briefing aggregating:
 - GitHub activity (issues, PRs, notifications)

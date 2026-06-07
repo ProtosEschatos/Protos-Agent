@@ -1,6 +1,6 @@
 # /review
 
-Trigger: Code Reviewer agent
+Trigger: QA & Security agent
 
 Reviews the current git diff (uncommitted changes or PR diff) and produces a structured report covering:
 - Code correctness and logic errors

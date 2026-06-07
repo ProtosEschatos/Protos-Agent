@@ -74,6 +74,8 @@ This mode permits code modifications for writing tests, debugging failures, and 
 
 In this mode, you do NOT modify source code. You produce structured audit reports.
 
+Load the `security-review` skill (`~/.config/kilo/skills/security-review.md`) via the `skill` tool for the full audit workflow and checklist.
+
 #### Audit Checklist
 
 **Secrets & Credentials**:

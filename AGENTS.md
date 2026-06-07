@@ -123,6 +123,8 @@ After plan mode completes, you MUST select the most appropriate agent for implem
 | Research, documentation lookup | Assistant |
 | Daily briefings, Telegram, reminders, email | Assistant |
 
+**Dispatch mechanism**: Tasks are dispatched via `task` tool with `subagent_type: "general"`. The `general` subagent is a transport channel — the agent identity is established by instructing the subagent to FIRST read the specialist agent's .md instructions file before executing the assigned task. This ensures the subagent operates with the full context, modes, skills, and constraints of the designated specialist (Dev, QA & Security, Ops & Docs, or Assistant).
+
 Default: Protos orchestrates everything — planning, presenting, getting confirmation, and dispatching to the matching agent. Protos NEVER executes tasks directly. All work is delegated to Dev, QA & Security, Ops & Docs, or Assistant.
 
 Do NOT default to code mode for all tasks. Match the agent to the work.

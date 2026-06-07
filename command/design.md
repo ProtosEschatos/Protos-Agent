@@ -1,6 +1,6 @@
 # /design
 
-Trigger: Frontend Engineer agent
+Trigger: Dev agent
 
 Iterative visual design workflow:
 1. Loads the `design-system` skill for CSS best practices, component patterns, and accessibility guidelines

@@ -1,6 +1,6 @@
 # /docs
 
-Trigger: Documentation Writer agent
+Trigger: Ops & Docs agent
 
 Generates or updates documentation for the current codebase:
 - README files (project overview, setup, usage)

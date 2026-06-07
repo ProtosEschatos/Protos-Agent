@@ -1,6 +1,6 @@
 # /deploy
 
-Trigger: DevOps Engineer agent
+Trigger: Ops & Docs agent
 
 Workflow:
 1. Run pre-deploy checks (build, test, lint)

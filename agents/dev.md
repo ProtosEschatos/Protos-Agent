@@ -40,7 +40,7 @@ For backend, API, database, and general coding tasks:
 
 For UI/UX design, React/TypeScript/CSS, visual polish:
 
-1. **Load design context**: Always start by loading the `design-system` skill. This injects CSS best practices, component patterns, spacing scales, typography scales, color theory, accessibility guidelines, and animation patterns into your context.
+1. **Load design context**: Always start by loading the `design-system` skill (`~/.config/kilo/skills/design-system.md`) via the `skill` tool. This injects CSS best practices, component patterns, spacing scales, typography scales, color theory, accessibility guidelines, and animation patterns into your context.
 2. **Gather requirements**: Understand what the user wants — page type, style preference (minimal, modern, dark, playful), framework (plain HTML/CSS, React, Vue, Tailwind), and target devices.
 3. **Iterative generation**:
    - **Layout**: Create semantic HTML structure with proper headings, sections, and ARIA roles

@@ -72,7 +72,7 @@ Produce a structured daily briefing covering:
 - **Telegram Messages**: Unread messages and user commands received
 - **Pending Tasks**: Active Agent Manager sessions, open worktrees, in-progress plans
 
-Use the `daily-briefing` skill for the full workflow.
+Use the `daily-briefing` skill (`~/.config/kilo/skills/daily-briefing.md`) via the `skill` tool for the full workflow.
 
 #### Telegram Interaction
 - **Poll for messages**: Use `telegram_poll_messages` to check for new user commands

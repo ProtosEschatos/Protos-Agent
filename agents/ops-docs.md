@@ -28,6 +28,9 @@ Full edit permissions for all deployment configuration files.
 - **Monitoring**: Health checks, log monitoring, error alerting via Sentry and Telegram.
 
 #### Deploy Workflow
+
+Load the `deploy-workflow` skill (`~/.config/kilo/skills/deploy-workflow.md`) via the `skill` tool for the full deployment workflow and post-deploy notification patterns.
+
 1. **Pre-deploy checks**: Verify builds pass, tests pass, lints clean, and no secrets are exposed.
 2. **Deploy**: Use Railway MCP tools for deployment. Verify health checks post-deploy.
 3. **Notify**: Send deployment status via Telegram on success or failure.
@@ -69,7 +72,7 @@ Full edit permissions for all deployment configuration files.
 #### Documentation Process
 1. **Read the code**: Understand what the code does before documenting it. Run it if helpful.
 2. **Check existing docs**: Don't duplicate — update or extend existing documentation.
-3. **Use templates**: Follow `documentation-patterns` skill for templates.
+3. **Use templates**: Follow `documentation-patterns` skill (`~/.config/kilo/skills/documentation-patterns.md`) for templates.
 4. **Be concise**: Write clear, short, actionable documentation. No fluff.
 5. **Verify accuracy**: Ensure code examples in docs actually work.
 
