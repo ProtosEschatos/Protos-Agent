@@ -1,0 +1,166 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "model": "deepseek/deepseek-v4-pro",
+  "permission": {
+    "bash": "allow",
+    "github_search_repositories": "allow",
+    "railway_list_projects": "allow",
+    "railway_list_workspaces": "allow",
+    "telegram_send_message": "allow",
+    "telegram_get_updates": "allow",
+    "telegram_get_bot_info": "allow",
+    "telegram_poll_messages": "allow",
+    "playwright_playwright_navigate": "allow",
+    "playwright_playwright_get": "allow",
+    "playwright_start_codegen_session": "allow",
+    "playwright_end_codegen_session": "allow",
+    "playwright_get_codegen_session": "allow",
+    "playwright_clear_codegen_session": "allow",
+    "playwright_playwright_screenshot": "allow",
+    "playwright_playwright_click": "allow",
+    "playwright_playwright_iframe_click": "allow",
+    "playwright_playwright_iframe_fill": "allow",
+    "playwright_playwright_fill": "allow",
+    "playwright_playwright_select": "allow",
+    "playwright_playwright_hover": "allow",
+    "playwright_playwright_upload_file": "allow",
+    "playwright_playwright_evaluate": "allow",
+    "playwright_playwright_console_logs": "allow",
+    "playwright_playwright_resize": "allow",
+    "playwright_playwright_close": "allow",
+    "playwright_playwright_post": "allow",
+    "playwright_playwright_put": "allow",
+    "playwright_playwright_patch": "allow",
+    "playwright_playwright_delete": "allow",
+    "playwright_playwright_expect_response": "allow",
+    "playwright_playwright_assert_response": "allow",
+    "playwright_playwright_custom_user_agent": "allow",
+    "playwright_playwright_get_visible_text": "allow",
+    "playwright_playwright_get_visible_html": "allow",
+    "playwright_playwright_go_back": "allow",
+    "playwright_playwright_go_forward": "allow",
+    "playwright_playwright_drag": "allow",
+    "playwright_playwright_press_key": "allow",
+    "playwright_playwright_save_as_pdf": "allow",
+    "playwright_playwright_click_and_switch_tab": "allow",
+    "cipher_brv-curate": "allow",
+    "cipher_brv-query": "allow",
+    "thoth-mem_store_memory": "allow",
+    "thoth-mem_search_memory": "allow",
+    "thoth-mem_list_memories": "allow"
+  },
+  "mcp": {
+    "github": {
+      "command": ["node", "/home/protos/Documents/Cline/MCP/github-server/node_modules/@modelcontextprotocol/server-github/dist/index.js"],
+      "environment": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      },
+      "enabled": true,
+      "timeout": 60000,
+      "type": "local"
+    },
+    "supabase": {
+      "command": ["node", "/home/protos/Documents/Cline/MCP/supabase-server/build/index.js"],
+      "environment": {
+        "SUPABASE_URL": "${SUPABASE_URL}",
+        "SUPABASE_SERVICE_KEY": "${SUPABASE_SERVICE_KEY}"
+      },
+      "enabled": true,
+      "timeout": 60000,
+      "type": "local"
+    },
+    "cloudflare": {
+      "command": ["node", "/home/protos/Documents/Cline/MCP/cloudflare-server/build/index.js"],
+      "environment": {
+        "CLOUDFLARE_API_TOKEN": "${CLOUDFLARE_API_TOKEN}",
+        "CLOUDFLARE_ACCOUNT_ID": "${CLOUDFLARE_ACCOUNT_ID}",
+        "CLOUDFLARE_ZONE_ID": "${CLOUDFLARE_ZONE_ID}"
+      },
+      "enabled": true,
+      "timeout": 60000,
+      "type": "local"
+    },
+    "resend": {
+      "command": ["node", "/home/protos/Documents/Cline/MCP/resend-server/build/index.js"],
+      "environment": {
+        "RESEND_API_KEY": "${RESEND_API_KEY}"
+      },
+      "enabled": true,
+      "timeout": 60000,
+      "type": "local"
+    },
+    "railway": {
+      "command": ["/home/protos/.railway/bin/railway", "mcp"],
+      "environment": {},
+      "enabled": true,
+      "timeout": 60000,
+      "type": "local"
+    },
+    "telegram": {
+      "command": ["node", "/home/protos/Documents/Cline/MCP/telegram-server/build/index.js"],
+      "environment": {
+        "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN}"
+      },
+      "enabled": true,
+      "timeout": 60000,
+      "type": "local"
+    },
+    "playwright": {
+      "command": ["npx", "-y", "@executeautomation/playwright-mcp-server"],
+      "environment": {},
+      "enabled": true,
+      "timeout": 60000,
+      "type": "local"
+    },
+    "cipher": {
+      "command": ["/home/protos/.npm-global/bin/brv", "mcp"],
+      "environment": {},
+      "enabled": true,
+      "timeout": 60000,
+      "type": "local"
+    },
+    "thoth-mem": {
+      "command": ["npx", "-y", "thoth-mem"],
+      "environment": {},
+      "enabled": true,
+      "timeout": 60000,
+      "type": "local"
+    },
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "enabled": true
+    },
+    "git": {
+      "command": ["uvx", "mcp-server-git", "--repository", "/home/protos/Documents"],
+      "environment": {},
+      "enabled": true,
+      "timeout": 60000,
+      "type": "local"
+    },
+    "sentry": {
+      "command": ["npx", "-y", "@sentry/mcp-server"],
+      "environment": {
+        "SENTRY_AUTH_TOKEN": "${SENTRY_AUTH_TOKEN}"
+      },
+      "enabled": true,
+      "timeout": 60000,
+      "type": "local"
+    },
+    "duckduckgo-search": {
+      "command": "uvx",
+      "args": ["duckduckgo-mcp-server"],
+      "env": {
+        "DDG_SAFE_SEARCH": "MODERATE"
+      },
+      "enabled": true,
+      "timeout": 60000,
+      "type": "local"
+    }
+  },
+  "agent": {
+    "protos": {
+      "model": "deepseek/deepseek-v4-pro"
+    }
+  }
+}
