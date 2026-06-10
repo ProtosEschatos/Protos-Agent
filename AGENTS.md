@@ -72,7 +72,7 @@ The following agents are available in `~/.config/kilo/agents/`. Switch to an age
 | Agent | File | Purpose |
 |-------|------|---------|
 | Protos | `protos.md` | Primary orchestrator — plans and dispatches tasks to specialist agents. Never executes directly. |
-| Dev | `dev.md` | All coding — backend, frontend (React/TS/CSS), refactoring, implementation |
+| Dev | `dev.md` | All coding — backend, frontend (Vue/TS/CSS), refactoring, implementation |
 | QA & Security | `qa-security.md` | Testing, debugging, Sentry triage, security audit, dependency scanning, code review |
 | Ops & Docs | `ops-docs.md` | Deployments (Railway, Cloudflare), CI/CD, Docker, infrastructure, documentation |
 | Assistant | `assistant.md` | Research, documentation lookup, daily briefings, Telegram, email, notifications |
@@ -119,7 +119,7 @@ After plan mode completes, you MUST select the most appropriate agent for implem
 
 | Task Type | Agent |
 |-----------|-------|
-| UI/UX design, HTML/CSS, React/TS implementation, visual polish | Dev |
+| UI/UX design, HTML/CSS, Vue/TS implementation, visual polish | Dev |
 | Backend, API, database, general implementation | Dev |
 | Code simplification, refactoring, cleanup | Dev |
 | Writing tests, debugging failures, log/Sentry analysis | QA & Security |
@@ -146,9 +146,7 @@ Do NOT default to code mode for all tasks. Match the agent to the work.
 - **AI tooling**: User uses Kilo Code with DeepSeek V4 Pro. NEVER suggest alternative AI coding tools/agents (Cline, Copilot, Codeium, etc.).
 - **Memory discipline**: Before any task, query `thoth-mem` for related past observations. After completing non-trivial work, store to both `thoth-mem` AND `cipher_brv-curate`.
 
-## Permanent Stack — ALWAYS ACTIVE
-
-> ⚠️ **DEFINITIVE. Nuxt 4 + Vue 3 + TypeScript (strict). Tailwind v4 via Nuxt UI v3. Never suggest anything outside this list.**
+## Permanent Stack
 
 ### Core
 | Layer | Technology |
@@ -167,49 +165,15 @@ Do NOT default to code mode for all tasks. Match the agent to the work.
 **Monitoring**: @sentry/nuxt, vue-toastification
 **Testing**: @nuxt/test-utils + vitest + @vue/test-utils
 
-### Forbidden Zone — NEVER use, suggest, or install
-Frameworks: React, Next.js, Angular, Svelte, SvelteKit, SolidJS, Astro, @nuxtjs/tailwindcss
-State: Vuex, Redux, Zustand, Jotai
-ORM: Prisma (use Drizzle)
-Database: Firebase, PlanetScale, Neon, MongoDB, MySQL, MariaDB (use Supabase)
-Auth: Clerk, Lucia, Auth.js, NextAuth, @sidebase/nuxt-auth, Better Auth (use Supabase Auth)
-Forms: VeeValidate (Nuxt UI v3 has built-in Zod validation)
-Cross-Platform: Tauri, Electron, React Native (use Capacitor + PWA)
-3D: Three.js direct, Vanta.js, Particles.js, React Three Fiber (use TresJS)
-Realtime: Socket.io, Pusher, Ably, PartyKit (use Supabase Realtime)
-Search: Algolia (use Supabase FTS or Meilisearch)
-Email: Mailchimp, MailerLite, SendGrid, Mailgun, Postmark, Nodemailer (use Resend + Brevo)
-Analytics: Hotjar, Plausible, Fathom, Umami, PostHog (use GA4 + Clarity)
-Chat: Intercom, Tidio, Tawk.to (use Crisp)
-Payment: PayPal, Square, Paddle, LemonSqueezy (use Stripe)
-Hosting: Netlify, DigitalOcean, Render, AWS, Heroku (use Vercel + Railway + Cloudflare)
-Automation: Zapier, BullMQ, Inngest (use n8n)
-Build: Webpack (Nuxt uses Vite)
-API: GraphQL, tRPC (use REST via server/api/)
-
-### 10 Rules
-1. Secrets → `.env` + `runtimeConfig` (NEVER in code)
-2. External API calls → `server/api/` (NEVER from frontend)
-3. Validation → Zod always (Nuxt UI v3 form validation)
-4. Auth → Supabase Auth only (useSsrCookies: true required)
-5. Database → Drizzle ORM + PostgreSQL (SSL false local, true production)
-6. 3D → TresJS (no direct Three.js in components)
-7. Animations → GSAP (.client.ts plugin) for complex, @vueuse/motion for simple
-8. State → Pinia (no provide/inject for global state)
-9. TypeScript → strict mode always
-10. Components → `app/components/{ui,sections,3d}/` (Nuxt 4 app/ directory)
-
 ### Critical Patterns
 - **GSAP**: Must be `.client.ts` plugin (SSR crash otherwise)
-- **Stripe Webhook**: Required at `server/api/stripe/webhook.post.ts`
 - **CSP**: Must allow WebGL (`'unsafe-eval'`, `'wasm-unsafe-eval'`, `blob:` workers)
 - **External scripts**: ONLY via `@nuxt/scripts` registry, never raw `<script>` tags
-- **Capacitor**: Requires SPA mode (`ssr: false`), set `BUILD_TARGET=mobile` in .env
 - **Drizzle SSL**: `false` locally, `true` in production
 
 ### Folder Structure (Nuxt 4)
 ```
-app/components/{ui,sections,3d}/  ← ALL Vue code
+app/components/  ← ALL Vue components (flat — no subfolders, Nuxt 4 bug)
 app/composables/  app/layouts/  app/middleware/  app/pages/  app/plugins/
 app/stores/  app/utils/  app/app.vue
 server/api/{stripe,booking,kontakt}/  server/middleware/  server/utils/
