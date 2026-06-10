@@ -26,9 +26,8 @@
 ```
 
 ## Project-Specific Rules
-- Read `.kilo/rules/stack.md` for allowed/forbidden technology
+- Read `~/.config/kilo/AGENTS.md` for project context
 - Nuxt 4 + Vue 3 + TypeScript strict
 - CSS variables for theming (no hardcoded colors)
 - Components in `app/components/` (no subfolder nesting for Nuxt 4 auto-import)
 - GSAP in `.client.ts` plugins only
-- Never: React, VeeValidate, Prisma, raw Three.js, Tauri
