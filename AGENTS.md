@@ -105,6 +105,13 @@ Skills are reusable instruction bundles in `~/.config/kilo/skills/`. Load them w
 | Daily Briefing | `daily-briefing.md` | Aggregating daily status across services |
 | Documentation Patterns | `documentation-patterns.md` | Writing READMEs, API docs, ADRs, changelogs |
 | Design System | `design-system.md` | CSS best practices, component patterns, accessibility, animations |
+| Code Review | `code-review.md` | Reviewing git diffs, code quality, bug detection |
+| Security Audit | `security-audit.md` | Dependency scanning, CSP/CORS, RLS policies, vulnerability checks |
+| Code Simplify | `code-simplify.md` | Refactoring, reducing complexity, removing dead code |
+| Frontend Engineer | `frontend-engineer.md` | Vue 3 / Nuxt 4 UI/UX, Nuxt UI v3 components, Tailwind theming |
+| DevOps Engineer | `devops-engineer.md` | Railway/Vercel/Cloudflare deployments, CI/CD, infrastructure |
+| Docs Writer | `docs-writer.md` | README, ADR, changelogs, API documentation |
+| Deep Research | `deep-research.md` | Multi-source web research with cited sources and recommendations |
 
 ## Agent Selection Strategy (MANDATORY)
 
@@ -138,6 +145,88 @@ Do NOT default to code mode for all tasks. Match the agent to the work.
 - **Environment**: You are running on Linux Mint Cinnamon. Editor is VS Codium (not VS Code). Extensions MUST come from Open VSX (open-vsx.org) only — NEVER suggest Microsoft Marketplace-only extensions. Always verify Open VSX availability before suggesting any extension.
 - **AI tooling**: User uses Kilo Code with DeepSeek V4 Pro. NEVER suggest alternative AI coding tools/agents (Cline, Copilot, Codeium, etc.).
 - **Memory discipline**: Before any task, query `thoth-mem` for related past observations. After completing non-trivial work, store to both `thoth-mem` AND `cipher_brv-curate`.
+
+## Permanent Stack — ALWAYS ACTIVE
+
+> ⚠️ **DEFINITIVE. Nuxt 4 + Vue 3 + TypeScript (strict). Tailwind v4 via Nuxt UI v3. Never suggest anything outside this list.**
+
+### Core
+| Layer | Technology |
+|-------|-----------|
+| Framework | **Nuxt 4** |
+| UI | **Vue 3 + TypeScript (strict)** |
+| CSS | **Tailwind v4** (via Nuxt UI v3 — NOT @nuxtjs/tailwindcss) |
+| UI Components | **Nuxt UI v3** (includes Tailwind v4 + form validation with Zod) |
+
+### Required Packages
+**Frontend Core**: @nuxt/ui, @nuxt/icon, @nuxt/fonts, @nuxt/image, @nuxtjs/seo, @nuxtjs/i18n (hr/en/de, prefix_except_default), @nuxtjs/color-mode, @nuxt/content, @nuxt/scripts, nuxt-security
+**State**: @pinia/nuxt, @vueuse/nuxt + @vueuse/core + @vueuse/motion
+**Backend**: @nuxtjs/supabase, drizzle-orm + drizzle-kit, zod, stripe, resend, @getbrevo/brevo, @calcom/embed-snippet
+**3D/Visual**: @tresjs/nuxt, gsap, @splinetool/vue-spline, vue3-lottie
+**Platform**: @vite-pwa/nuxt, @capacitor/core (+ ios/android), @capgo/capacitor-updater
+**Monitoring**: @sentry/nuxt, vue-toastification
+**Testing**: @nuxt/test-utils + vitest + @vue/test-utils
+
+### Forbidden Zone — NEVER use, suggest, or install
+Frameworks: React, Next.js, Angular, Svelte, SvelteKit, SolidJS, Astro, @nuxtjs/tailwindcss
+State: Vuex, Redux, Zustand, Jotai
+ORM: Prisma (use Drizzle)
+Database: Firebase, PlanetScale, Neon, MongoDB, MySQL, MariaDB (use Supabase)
+Auth: Clerk, Lucia, Auth.js, NextAuth, @sidebase/nuxt-auth, Better Auth (use Supabase Auth)
+Forms: VeeValidate (Nuxt UI v3 has built-in Zod validation)
+Cross-Platform: Tauri, Electron, React Native (use Capacitor + PWA)
+3D: Three.js direct, Vanta.js, Particles.js, React Three Fiber (use TresJS)
+Realtime: Socket.io, Pusher, Ably, PartyKit (use Supabase Realtime)
+Search: Algolia (use Supabase FTS or Meilisearch)
+Email: Mailchimp, MailerLite, SendGrid, Mailgun, Postmark, Nodemailer (use Resend + Brevo)
+Analytics: Hotjar, Plausible, Fathom, Umami, PostHog (use GA4 + Clarity)
+Chat: Intercom, Tidio, Tawk.to (use Crisp)
+Payment: PayPal, Square, Paddle, LemonSqueezy (use Stripe)
+Hosting: Netlify, DigitalOcean, Render, AWS, Heroku (use Vercel + Railway + Cloudflare)
+Automation: Zapier, BullMQ, Inngest (use n8n)
+Build: Webpack (Nuxt uses Vite)
+API: GraphQL, tRPC (use REST via server/api/)
+
+### 10 Rules
+1. Secrets → `.env` + `runtimeConfig` (NEVER in code)
+2. External API calls → `server/api/` (NEVER from frontend)
+3. Validation → Zod always (Nuxt UI v3 form validation)
+4. Auth → Supabase Auth only (useSsrCookies: true required)
+5. Database → Drizzle ORM + PostgreSQL (SSL false local, true production)
+6. 3D → TresJS (no direct Three.js in components)
+7. Animations → GSAP (.client.ts plugin) for complex, @vueuse/motion for simple
+8. State → Pinia (no provide/inject for global state)
+9. TypeScript → strict mode always
+10. Components → `app/components/{ui,sections,3d}/` (Nuxt 4 app/ directory)
+
+### Critical Patterns
+- **GSAP**: Must be `.client.ts` plugin (SSR crash otherwise)
+- **Stripe Webhook**: Required at `server/api/stripe/webhook.post.ts`
+- **CSP**: Must allow WebGL (`'unsafe-eval'`, `'wasm-unsafe-eval'`, `blob:` workers)
+- **External scripts**: ONLY via `@nuxt/scripts` registry, never raw `<script>` tags
+- **Capacitor**: Requires SPA mode (`ssr: false`), set `BUILD_TARGET=mobile` in .env
+- **Drizzle SSL**: `false` locally, `true` in production
+
+### Folder Structure (Nuxt 4)
+```
+app/components/{ui,sections,3d}/  ← ALL Vue code
+app/composables/  app/layouts/  app/middleware/  app/pages/  app/plugins/
+app/stores/  app/utils/  app/app.vue
+server/api/{stripe,booking,kontakt}/  server/middleware/  server/utils/
+shared/  content/  public/icons/  drizzle/  i18n/locales/
+```
+
+### Deploy
+Vercel (client sites) | Railway (apps with DB) | Cloudflare (DNS) | Supabase (database)
+Capacitor + Capgo (mobile) | PWA (desktop) | n8n (automation)
+
+## Post-Execution Workflow Rule
+
+After every agent dispatch completes:
+1. Check memory for the original plan — diff what was done vs what was planned
+2. Put any missed/unfinished items in a todo list
+3. Immediately propose the best-suited agent to continue/fix/complete remaining work
+4. NEVER silently drop incomplete tasks
 
 ## Post-Plan Automation Rule
 
