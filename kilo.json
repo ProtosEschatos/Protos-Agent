@@ -1,0 +1,45 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "mcp": {
+    "supabase": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@supabase/mcp-server-supabase@0.5.5",
+        "--access-token",
+        "sbp_6b5e2455c41e9788edeea2bac722df65f453e282"
+      ]
+    },
+    "cloudflare": {
+      "type": "local",
+      "command": [
+        "npx",
+        "mcp-remote",
+        "https://browser.mcp.cloudflare.com/sse"
+      ]
+    },
+    "github": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "environment": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "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"
+      }
+    },
+    "brave-search": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-brave-search"
+      ],
+      "environment": {
+        "BRAVE_API_KEY": "BSAi6T2ZDB_544ZCG7BBQKlMEbp1Suv"
+      }
+    }
+  }
+}

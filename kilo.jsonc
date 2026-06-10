@@ -356,5 +356,18 @@
     }
   },
   "subagent_model": "deepseek/deepseek-v4-pro",
-  "subagent_variant": "max"
+  "subagent_variant": "max",
+  "skills": {
+    "paths": [
+      "/home/protos/.config/kilo/skills/"
+    ]
+  },
+  "instructions": [
+    "/home/protos/.config/kilo/AGENTS.md"
+  ],
+  "share": "manual",
+  "experimental": {
+    "disable_paste_summary": false,
+    "openTelemetry": true
+  }
 }
