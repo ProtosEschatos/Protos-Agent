@@ -157,9 +157,9 @@ Do NOT default to code mode for all tasks. Match the agent to the work.
 | UI Components | **Nuxt UI v3** (includes Tailwind v4 + form validation with Zod) |
 
 ### Required Packages
-**Frontend Core**: @nuxt/ui, @nuxt/icon, @nuxt/fonts, @nuxt/image, @nuxtjs/seo, @nuxtjs/i18n (hr/en/de, prefix_except_default), @nuxtjs/color-mode, @nuxt/content, @nuxt/scripts, nuxt-security
+**Frontend Core**: @nuxt/ui, @nuxt/icon, @nuxt/fonts, @nuxt/image, @nuxtjs/seo, @nuxtjs/i18n (hr/en/de/it/es, prefix_except_default), @nuxtjs/color-mode, @nuxt/scripts, nuxt-security
 **State**: @pinia/nuxt, @vueuse/nuxt + @vueuse/core + @vueuse/motion
-**Backend**: @nuxtjs/supabase, drizzle-orm + drizzle-kit, zod, stripe, resend, @getbrevo/brevo, @calcom/embed-snippet
+**Backend**: @nuxtjs/supabase (requires keys), drizzle-orm + drizzle-kit, zod, stripe, resend, @getbrevo/brevo, @calcom/embed-snippet
 **3D/Visual**: @tresjs/nuxt, gsap, @splinetool/vue-spline, vue3-lottie
 **Platform**: @vite-pwa/nuxt, @capacitor/core (+ ios/android), @capgo/capacitor-updater
 **Monitoring**: @sentry/nuxt, vue-toastification
@@ -168,7 +168,7 @@ Do NOT default to code mode for all tasks. Match the agent to the work.
 ### Critical Patterns
 - **GSAP**: Must be `.client.ts` plugin (SSR crash otherwise)
 - **CSP**: Must allow WebGL (`'unsafe-eval'`, `'wasm-unsafe-eval'`, `blob:` workers)
-- **External scripts**: ONLY via `@nuxt/scripts` registry, never raw `<script>` tags
+- **External scripts**: via `@nuxt/scripts` registry
 - **Drizzle SSL**: `false` locally, `true` in production
 
 ### Folder Structure (Nuxt 4)

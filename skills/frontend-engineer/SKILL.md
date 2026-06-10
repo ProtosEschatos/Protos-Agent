@@ -18,9 +18,9 @@
 | Day | `#f43f5e` | `#06b6d4` | `#f97316` | `#fdf2f8` |
 | Profi | `#dc2626` | `#d4af37` | `#991b1b` | `#000000` |
 
-## Forbidden
-- Raw Three.js → use TresJS
-- Inline CSS → use Tailwind classes + CSS variables
-- VeeValidate → use Nuxt UI v3 Zod integration
-- @nuxtjs/tailwindcss → Nuxt UI v3 includes Tailwind
-- Font Awesome → @nuxt/icon
+## Guidelines
+- Prefer TresJS over direct Three.js
+- Use Tailwind classes + CSS variables over inline styles
+- Nuxt UI v3 built-in Zod validation over VeeValidate
+- Nuxt UI v3 includes Tailwind v4 (no separate @nuxtjs/tailwindcss)
+- @nuxt/icon over Font Awesome
