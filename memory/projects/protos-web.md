@@ -29,7 +29,7 @@ Privatna kontrolna ploča na **glavnoj domeni** (ne subdomena).
 - HttpOnly cookie `protos-admin-session` (HMAC SHA-256)
 - Middleware štiti `/admin/*` osim `/admin/login`
 - Rate limit: 5 pokušaja / 15 min na `/api/admin/login`
-- Nav link **PANEL** vidljiv samo kad je session aktivan (`AdminNavLink` + `/api/admin/session`)
+- **Nema javnog nav linka** — admin samo direktni URL `/admin` (uklonjen `AdminNavLink`)
 
 ### Ključne putanje
 ```
@@ -113,21 +113,33 @@ Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 - **Brevo:** use `xkeysib-` API key, NOT `xsmtpsib-` SMTP key
 - **CF API:** IDE `cfat_` tokeni ne rade na `/dns_records`; DNS fix ručno ili Zone DNS Edit token + `scripts/fix-cloudflare-dns.sh`
 
-## Commits (2026-07-06, nastavak)
+## Commits (2026-07-06–07, nastavak)
 
 | SHA | Opis |
 |-----|------|
 | `95426fc` | Email Zoho/Resend/Brevo routing |
 | `e4f682c` | Brevo marketing admin buttons |
 | `778db23` | security.txt, DNS fix script, docs |
+| `bb88992` | WhatsApp/Instagram kontakt, DonateButton, roadmap batch start |
+| `578f768` | Keep-alive JWT fix, admin auth redirect, nav cleanup, 115% scale |
+| `d978d74` | Trigger keep-alive redeploy |
+
+## Finalni env audit (2026-07-07)
+
+- **Obavezno:** Vercel + Supabase + GitHub + Cloudflare DNS — kompletno
+- **Live testovi:** kontakt 200, newsletter 200, admin login API 401/200, keep-alive cron success
+- **Opcionalno nije postavljeno:** `STRIPE_DONATION_*`, Turnstile, Upstash, `BREVO_NEWSLETTER_LIST_ID`
+- **Višak (ne škodi):** Resend/Brevo na Vercelu, `STRIPE_WEBHOOK_SECRET`/`FIRECRAWL` u Supabase, `TELEGRAM_*` na Vercelu
+- **Zoho API nije potreban** — primanje preko Cloudflare MX
 
 ## Ručni TODO (vlasnik)
 
-- [ ] Live test: kontakt forma + newsletter
+- [x] Live test: kontakt forma + newsletter (2026-07-07)
+- [x] Env audit — sve platforme (2026-07-07)
+- [x] Keep-alive cron nakon no-verify-jwt deploya
 - [ ] Cloudflare MFA (My Profile → 2FA)
-- [ ] Provjeriti CMS karticu na `/admin` (SERVICE_ROLE na Vercelu)
-- [ ] Upisati prave URL-ove u `src/lib/social-links.ts`
-- [ ] Rotirati ključeve ako su bili u chatu (CF, R2, Resend, Brevo)
+- [ ] Upisati prave URL-ove u `src/lib/social-links.ts` (Instagram itd.)
+- [ ] Opcionalno: donacije, Turnstile, Upstash, Brevo list ID
 
 ## Korisnik
 
