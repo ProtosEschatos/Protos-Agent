@@ -152,7 +152,7 @@ Do NOT default to code mode for all tasks. Match the agent to the work.
 
 ## Constraints
 
-- **Do NOT modify `kilo.jsonc` or MCP settings unless explicitly asked.** Config changes require user approval.
+- **Do NOT commit local IDE config** (`kilo.json`, `kilo.jsonc`) — gitignored; not part of Protos-Web.
 - **Do NOT modify agent definition files** (`.kilo/agents/*.md`, `~/.config/kilo/agents/*.md`) unless explicitly asked.
 - **Always prefer project-level conventions** over personal preference.
 - **Always implement changes responsively**: Every UI/UX change, bugfix, or new feature must be tested and functional at both mobile (375px+) and desktop (1024px+) breakpoints. Never implement mobile-only or desktop-only without the counterpart.

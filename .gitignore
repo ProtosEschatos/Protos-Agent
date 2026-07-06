@@ -1,5 +1,7 @@
-# Local agent config with secrets (use kilo.jsonc + env vars)
+# Local agent config (Kilo IDE — not part of Protos-Web site)
 kilo.json
+kilo.jsonc
+kilo.json.example
 
 # Supabase CLI temp
 supabase/.temp/
