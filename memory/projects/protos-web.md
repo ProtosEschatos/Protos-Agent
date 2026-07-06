@@ -99,6 +99,15 @@ Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 | `64c140d` | CMS hub — blog, portfolio, inbox, notifikacije |
 | `6e081d5` | Routing circular import fix |
 
+## Email (2026-07-06)
+
+- **Receive:** Zoho `dario.admin@protosweb.eu` (Cloudflare MX)
+- **Contact send:** Resend primary → Brevo fallback (`submit-form`)
+- **Newsletter:** Brevo primary → Resend fallback (`subscribe`)
+- **Docs:** `Protos-Web/docs/email-setup.md`
+- **Secrets:** Resend/Brevo API keys in Supabase only; `ADMIN_SECRET` + `SERVICE_ROLE` on Vercel
+- **Brevo:** use `xkeysib-` API key, NOT `xsmtpsib-` SMTP key
+
 ## Ručni TODO (vlasnik)
 
 - [ ] Provjeriti `SUPABASE_SERVICE_ROLE_KEY` na Vercelu (CMS status na dashboardu)
