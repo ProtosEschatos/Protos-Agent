@@ -92,7 +92,7 @@
     "cloudflare": {
       "command": ["node", "/home/protos/Documents/Cline/MCP/cloudflare-server/build/index.js"],
       "environment": {
-        "CLOUDFLARE_API_TOKEN": "cfat_J60Rjw30vus2kWZbitgtiiiwyWHRBsVbN7wrBo0Ne7f8c37a",
+        "CLOUDFLARE_API_TOKEN": "${CLOUDFLARE_API_TOKEN}",
         "CLOUDFLARE_ACCOUNT_ID": "72f2faced156df27860729035b518ef2",
         "CLOUDFLARE_ZONE_ID": "bed06bcd91bd2486259c0bee6a758063"
       },

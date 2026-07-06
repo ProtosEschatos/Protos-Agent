@@ -1,0 +1,10 @@
+# Local agent config with secrets (use kilo.jsonc + env vars)
+kilo.json
+
+# Supabase CLI temp
+supabase/.temp/
+
+# OS / IDE
+.DS_Store
+.idea/
+*.swp
