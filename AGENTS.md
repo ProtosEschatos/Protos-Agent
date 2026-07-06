@@ -4,6 +4,20 @@
 
 You have access to a persistent knowledge base via the `thoth-mem` MCP server. Use it to retain and retrieve knowledge across sessions so that every task benefits from past work.
 
+### Repo memory (`memory/` in this repository)
+
+Structured, git-versioned context lives in **`Protos-Agent/memory/`**:
+
+| Path | Use |
+|------|-----|
+| `memory/projects/protos-web.md` | Protos-Web stack, admin CMS, secrets map, known fixes |
+| `memory/sessions/` | Session diaries (what shipped and why) |
+| `memory/learnings/` | Reusable patterns and error fixes |
+| `memory/index.jsonl` | Session index for quick lookup |
+
+**Before Protos-Web tasks:** read `memory/projects/protos-web.md`.  
+**After significant work:** append session + update project doc + add `index.jsonl` row; commit to this repo.
+
 ### Search Memory First
 Before starting any task — whether planning, coding, or testing — query `thoth-mem` for related past observations. Use relevant keywords from the current task to find prior decisions, patterns, errors, and project context.
 
