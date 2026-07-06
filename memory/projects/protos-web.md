@@ -99,21 +99,35 @@ Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 | `64c140d` | CMS hub — blog, portfolio, inbox, notifikacije |
 | `6e081d5` | Routing circular import fix |
 
-## Email (2026-07-06)
+## Email + DNS (2026-07-06, večer — sve OK)
 
 - **Receive:** Zoho `dario.admin@protosweb.eu` (Cloudflare MX)
 - **Contact send:** Resend primary → Brevo fallback (`submit-form`)
 - **Newsletter:** Brevo primary → Resend fallback (`subscribe`)
-- **Docs:** `Protos-Web/docs/email-setup.md`
-- **Secrets:** Resend/Brevo API keys in Supabase only; `ADMIN_SECRET` + `SERVICE_ROLE` on Vercel
+- **Resend:** domena **Verified** (eu-west-1); Cloudflare `send` MX+SPF + `resend._domainkey` DKIM
+- **Brevo:** `brevo-code` (jedan), `brevo1/2._domainkey` CNAME, SPF u apex
+- **DMARC:** `rua=mailto:dario.admin@protosweb.eu` ✅
+- **security.txt:** `public/.well-known/security.txt` live
+- **Docs:** `Protos-Web/docs/email-setup.md`, `docs/cloudflare-dns.md`, `docs/security.md`
+- **Secrets:** Resend/Brevo API keys in Supabase only; `ADMIN_SECRET` + `SERVICE_ROLE` on Vercel (ADMIN_SECRET **nije** u Supabase)
 - **Brevo:** use `xkeysib-` API key, NOT `xsmtpsib-` SMTP key
+- **CF API:** IDE `cfat_` tokeni ne rade na `/dns_records`; DNS fix ručno ili Zone DNS Edit token + `scripts/fix-cloudflare-dns.sh`
+
+## Commits (2026-07-06, nastavak)
+
+| SHA | Opis |
+|-----|------|
+| `95426fc` | Email Zoho/Resend/Brevo routing |
+| `e4f682c` | Brevo marketing admin buttons |
+| `778db23` | security.txt, DNS fix script, docs |
 
 ## Ručni TODO (vlasnik)
 
-- [ ] Provjeriti `SUPABASE_SERVICE_ROLE_KEY` na Vercelu (CMS status na dashboardu)
-- [ ] Obrisati `ADMIN_SECRET` iz Supabase Edge secrets ako još postoji
+- [ ] Live test: kontakt forma + newsletter
+- [ ] Cloudflare MFA (My Profile → 2FA)
+- [ ] Provjeriti CMS karticu na `/admin` (SERVICE_ROLE na Vercelu)
 - [ ] Upisati prave URL-ove u `src/lib/social-links.ts`
-- [ ] 2FA na Vercel, GitHub, Supabase, Cloudflare, Zoho
+- [ ] Rotirati ključeve ako su bili u chatu (CF, R2, Resend, Brevo)
 
 ## Korisnik
 
