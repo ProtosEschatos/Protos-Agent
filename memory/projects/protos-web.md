@@ -123,14 +123,17 @@ Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 | `bb88992` | WhatsApp/Instagram kontakt, DonateButton, roadmap batch start |
 | `578f768` | Keep-alive JWT fix, admin auth redirect, nav cleanup, 115% scale |
 | `d978d74` | Trigger keep-alive redeploy |
+| `52878ee` | Dependabot: ignore major bumps |
+| `7892a8c` | lucide-react minor bump |
 
 ## Finalni env audit (2026-07-07)
 
-- **Obavezno:** Vercel + Supabase + GitHub + Cloudflare DNS — kompletno
-- **Live testovi:** kontakt 200, newsletter 200, admin login API 401/200, keep-alive cron success
+- **Obavezno:** Vercel (11 varijabli), Supabase, GitHub, Cloudflare DNS — kompletno
+- **Vercel cleanup:** uklonjeni legacy mail/telegram/dupli Supabase integracijski ključevi
+- **Live testovi:** kontakt 200, newsletter 200, admin 200, keep-alive success
+- **Dependabot:** major ignorirani; merge postcss + lucide minor
 - **Opcionalno nije postavljeno:** `STRIPE_DONATION_*`, Turnstile, Upstash, `BREVO_NEWSLETTER_LIST_ID`
-- **Višak (ne škodi):** Resend/Brevo na Vercelu, `STRIPE_WEBHOOK_SECRET`/`FIRECRAWL` u Supabase, `TELEGRAM_*` na Vercelu
-- **Zoho API nije potreban** — primanje preko Cloudflare MX
+- **Supabase (ne dirati):** `STRIPE_WEBHOOK_SECRET`, `FIRECRAWL_API_KEY` — legacy, ne škode
 
 ## Ručni TODO (vlasnik)
 
