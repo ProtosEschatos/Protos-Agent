@@ -125,12 +125,14 @@ Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 | `d978d74` | Trigger keep-alive redeploy |
 | `52878ee` | Dependabot: ignore major bumps |
 | `7892a8c` | lucide-react minor bump |
+| `bc88971` | docs: final Vercel env cleanup + remote verification |
 
-## Finalni env audit (2026-07-07)
+## Finalni env audit (2026-07-07) — plan "Remote perfect safe" ✅
 
 - **Obavezno:** Vercel (11 varijabli), Supabase, GitHub, Cloudflare DNS — kompletno
 - **Vercel cleanup:** uklonjeni legacy mail/telegram/dupli Supabase integracijski ključevi
 - **Live testovi:** kontakt 200, newsletter 200, admin 200, keep-alive success
+- **Remote (2026-07-07 noć):** `main` = remote, CI zelen, Vercel READY, 0 otvorenih PR-ova
 - **Dependabot:** major ignorirani; merge postcss + lucide minor
 - **Opcionalno nije postavljeno:** `STRIPE_DONATION_*`, Turnstile, Upstash, `BREVO_NEWSLETTER_LIST_ID`
 - **Supabase (ne dirati):** `STRIPE_WEBHOOK_SECRET`, `FIRECRAWL_API_KEY` — legacy, ne škode
