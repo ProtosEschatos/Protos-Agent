@@ -163,13 +163,60 @@ Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 - **Opcionalno nije postavljeno:** `STRIPE_DONATION_*`, Turnstile, Upstash, `BREVO_NEWSLETTER_LIST_ID`
 - **Supabase (ne dirati):** `STRIPE_WEBHOOK_SECRET`, `FIRECRAWL_API_KEY` — legacy, ne škode
 
+## SEO (2026-07-11) — „brutalnost” faza 1–3 ✅
+
+**Commit:** `5d062f9` — live na https://www.protosweb.eu
+
+### Tehnički
+- `public/llms.txt` — AI crawler guidance (studio, URL-ovi, jezici, kontakt, autori)
+- `src/app/robots.ts` — GPTBot, ClaudeBot, PerplexityBot, Google-Extended; disallow `/admin`
+- `src/app/sitemap.ts` — `lastModified`, priority (home 1.0, usluge/kontakt 0.9, legal 0.3, showcase 0.4)
+- `localePrefix: 'as-needed'` — **zadržano** (HR root, hreflang ispravan)
+
+### Schema (`src/lib/creator-seo.ts` + `LocaleCreatorSeo.tsx`)
+- `@graph`: WebSite, Organization, Person×2 (Dario, Martina), CreativeWork, **ProfessionalService**
+- Martina: nevidljiva u UI osim `/o-meni`; vidljiva u `<head>` + llms.txt
+- `/usluge`: FAQPage JSON-LD + `FaqSection.tsx` (5 jezika, HTML accordion)
+
+### Metadata + crawl
+- Home description obogaćen (hr/en/de/it/es)
+- Twitter `creator`: `@protos_eschatos`
+- Blog `generateStaticParams` — SSG za slugove
+- `loading="lazy"` na portfolio/showcase slikama
+
+### Legal + consent (isti deploy)
+- `SiteConsentModal` — obavezno prihvaćanje uvjeta prije ulaska (boot-gate v11)
+- Legal copy u `src/messages/_legal/*.json` (5 jezika)
+- Obrt: Protos Web Mark23, OIB 23732814520
+
+### Live verify (2026-07-11)
+- `https://www.protosweb.eu/llms.txt` → 200
+- `https://www.protosweb.eu/robots.txt` → 200 (AI bot rules)
+- `https://www.protosweb.eu/sitemap.xml` → 200
+- Apex `protosweb.eu` → 307 → `www.protosweb.eu` ✅
+
+### Faza 2 (2026-07-11)
+**Commit:** nakon `5d062f9` — breadcrumbs, page schema, metadata
+- `BreadcrumbList` na `/usluge`, `/kontakt`, `/portfolio`
+- `WebPage` schema na usluge, `ContactPage` na kontakt
+- `ItemList` of `CreativeWork` na portfolio kad ima aktivnih projekata
+- `WebSite.potentialAction` ContactAction u creator graph
+- FAQ accordion CLS fix (CSS grid umjesto height animacije)
+- Obogaćeni metadata (contact, process, portfolio, blog) — 5 jezika
+
+### Otvoreno (SEO faza 2b)
+- Portfolio `[slug]` rute kad `portfolio_items` ponovno imaju aktivne projekte
+- Off-page: GSC, Bing, Google Business, Clutch — ručno
+
+**Learning:** `memory/learnings/protos-web-seo-patterns.md`
+
 ## Deploy (2026-07-10 napomena)
 
 Push na `main` → Vercel production. **Nakon svakog pusha provjeri** `vercel ls` / live URL — GitHub CI zelen ≠ automatski live. Webhook ponekad kasni → `vercel redeploy` ili prazan commit. **`ADMIN_SECRET` samo na Vercelu** — git revert ga ne vraća.
 
 ## Commits (incident recovery, 2026-07-10)
 
-Revert baze: `e4a264c` (6.7.), zatim fixevi ispod. Trenutni `main` @ `3bc309c`.
+Revert baze: `e4a264c` (6.7.), zatim fixevi ispod. Trenutni `main` @ `5d062f9`.
 
 | SHA | Opis |
 |-----|------|
@@ -180,6 +227,8 @@ Revert baze: `e4a264c` (6.7.), zatim fixevi ispod. Trenutni `main` @ `3bc309c`.
 | `9861587` | Navbar: bez duplog Kontakt, bez Prisutnost |
 | `4834a6b` | Hydration fix (PageLoader + blog UTC) |
 | `3bc309c` | Boot veil hide not remove |
+| `5d062f9` | Legal consent, creator SEO graph, llms.txt, FAQ, sitemap/robots, blog SSG |
+| `e373d1c` | Breadcrumbs, WebPage/ContactPage schema, portfolio ItemList, metadata enrich |
 
 Sesija: `memory/sessions/2026-07-10-incident-recovery.md`
 
