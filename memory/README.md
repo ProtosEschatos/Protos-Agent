@@ -21,3 +21,4 @@ Trajna baza znanja za AI agente — odluke, projekti, greške i obrasci iz stvar
 ## Aktivni projekti
 
 - [Protos-Web](./projects/protos-web.md) — `www.protosweb.eu` (Next.js 14, Vercel, Supabase)
+- [Bodulica](./projects/bodulica.md) — `bodulica.shop` (vanilla HTML/JS, Cloudflare Pages, Supabase Edge, Stripe)
