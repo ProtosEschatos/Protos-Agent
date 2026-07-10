@@ -25,11 +25,12 @@
 Privatna kontrolna ploča na **glavnoj domeni** (ne subdomena).
 
 ### Auth
-- Lozinka = env `ADMIN_SECRET` (**samo Vercel**, ne Supabase)
+- Lozinka = env `ADMIN_SECRET` (**samo Vercel**, ne Supabase) — **env se NE vraća git revertom**
 - HttpOnly cookie `protos-admin-session` (HMAC SHA-256)
 - Middleware štiti `/admin/*` osim `/admin/login`
-- Rate limit: 5 pokušaja / 15 min na `/api/admin/login`
-- **Nema javnog nav linka** — admin samo direktni URL `/admin` (uklonjen `AdminNavLink`)
+- Rate limit: **samo neuspjeli** pokušaji / 15 min na `/api/admin/login` (ne broji uspješne)
+- `.trim()` na `ADMIN_SECRET` i unesenu lozinku pri usporedbi
+- **Nema javnog nav linka** — `AdminNavLink` samo kad je session aktivan (skriveno za anon)
 
 ### Ključne putanje
 ```
@@ -63,6 +64,17 @@ src/components/admin/AdminLink.tsx    # interni linkovi bez next-intl routing
 - `contacts` — kontakt forma
 - `subscribers` — newsletter
 
+### Portfolio (2026-07-10)
+- **4 demo seed projekta deaktivirana** u bazi (`active=false`, reverzibilno) — Bodulica, Zeus Trading, Cosmic Blueprint, Protos Web
+- Prazan grid prikazuje i18n `portfolio.empty` ("još nema projekata")
+- **3D showcase** (`/portfolio-showcase`): `PROJECT_LINKS = []` u `src/components/three/showcase/constants.ts` → 8 praznih okvira dok nema stvarnih projekata
+- Demo showcase stringovi (`project1..4_title/desc`) uklonjeni iz `src/messages/*.json`
+
+### Javna navigacija (2026-07-10)
+- 6 linkova: home, o-meni, proces, portfolio, usluge, blog
+- **Kontakt** samo kao CTA gumb (nema duplog linka u redu)
+- **Prisutnost** uklonjena iz navbara (bila pod-sekcija O meni)
+
 ## Tajne — mapa
 
 | Secret | Gdje | Ne u |
@@ -77,11 +89,25 @@ Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 
 ## Poznati bugovi i fix-evi
 
-### 1. Prazan admin panel (boot veil)
+### 0. Revert baze (2026-07-10)
+**Kontekst:** korisnik zahtijevao full revert na `e4a264c` (6.7. večer). Sve nakon toga uklonjeno s `main` force pushom. **Vercel env varijable nisu u gitu** — posebno `ADMIN_SECRET` treba ručno uskladiti nakon reverta.
+
+### 1. Stranica "ne radi" / jezici / klikovi ne rade (hydration)
+**Uzrok:** React hydration mismatch (#418/#423/#425):
+- `PageLoader` `useState(() => sessionStorage...)` — server vs client različit initial state
+- Blog `toLocaleDateString` bez `timeZone: 'UTC'` — različit dan na serveru vs browseru  
+**Fix (`4834a6b`):** deterministički `loading=true` + `useLayoutEffect(isBootComplete)`; blog datumi s `timeZone: 'UTC'`.  
+**Test:** Playwright — ULAZ, cookie modal, language switch `/en` rade.
+
+### 2. Boot veil removeChild greška
+**Uzrok:** `removeBootSsrVeil()` radio `element.remove()` na React-owned `#boot-ssr-veil`.  
+**Fix (`3bc309c`):** `display: none` umjesto remove; CSS `html.boot-complete #boot-ssr-veil { display: none }` već postoji.
+
+### 3. Prazan admin panel (boot veil)
 **Uzrok:** `#boot-ssr-veil` ostaje jer `AppChrome` za `/admin` preskače `PageLoader` ali ne zove `clearBootPending()` / `removeBootSsrVeil()`.  
 **Fix:** `AdminShell` + admin rute u `AppChrome` potpuno izvan boot gatea, PageLoadera, CookieBannera.
 
-### 2. Build: `Cannot access 'n' before initialization`
+### 4. Build: `Cannot access 'n' before initialization`
 **Uzrok:** Server admin stranice + `next-intl` `Link`/`routing` u istom webpack chunku → circular TDZ.  
 **Fix:**
 - `AdminLink` (`<a>`) na server admin komponentama
@@ -137,6 +163,31 @@ Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 - **Opcionalno nije postavljeno:** `STRIPE_DONATION_*`, Turnstile, Upstash, `BREVO_NEWSLETTER_LIST_ID`
 - **Supabase (ne dirati):** `STRIPE_WEBHOOK_SECRET`, `FIRECRAWL_API_KEY` — legacy, ne škode
 
+## Deploy (2026-07-10 napomena)
+
+Push na `main` → Vercel production. **Nakon svakog pusha provjeri** `vercel ls` / live URL — GitHub CI zelen ≠ automatski live. Webhook ponekad kasni → `vercel redeploy` ili prazan commit. **`ADMIN_SECRET` samo na Vercelu** — git revert ga ne vraća.
+
+## Commits (incident recovery, 2026-07-10)
+
+Revert baze: `e4a264c` (6.7.), zatim fixevi ispod. Trenutni `main` @ `3bc309c`.
+
+| SHA | Opis |
+|-----|------|
+| `c5e891d` | Hero tagline svi jezici |
+| `66af432` | Admin login trim + rate-limit samo fail |
+| `92403e8` | Prazan showcase PROJECT_LINKS |
+| `98772b2` | Demo showcase i18n stringovi out |
+| `9861587` | Navbar: bez duplog Kontakt, bez Prisutnost |
+| `4834a6b` | Hydration fix (PageLoader + blog UTC) |
+| `3bc309c` | Boot veil hide not remove |
+
+Sesija: `memory/sessions/2026-07-10-incident-recovery.md`
+
+## Otvoreno (2026-07-10)
+
+- [ ] `/admin` dashboard HTTP 500 (login OK, render puca)
+- [ ] ProtosLogo framer-motion circle cx/cy warning (kozmetički)
+
 ## Ručni TODO (vlasnik)
 
 - [x] Live test: kontakt forma + newsletter (2026-07-07)
@@ -151,3 +202,7 @@ Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 - GitHub: `@ProtosEschatos`
 - Preferira hrvatski, minimalan ručni rad, automatizacija gdje moguće
 - Admin email: `dario.admin@protosweb.eu`
+- **Ne prikazivati placeholder/demo sadržaj** (portfolio, lažni projekti) dok nije stvarno spremno
+- **Push mora završiti live na Vercelu** — ne samo GitHub
+- Kad kaže "stranica ne radi" — testirati Playwright/browser, ne samo curl
+- Jako osjetljiv na regresije nakon promjena; preferira revert na poznato dobro stanje
