@@ -88,7 +88,7 @@ src/lib/ai/providers.ts              # DeepSeek + opcionalno Gemini
 **Zoho IMAP:** `ZOHO_IMAP_*` na Vercelu — čita inbox u `/admin/inbox`.  
 **Gmail studio IMAP:** `GMAIL_STUDIO_IMAP_*` na Vercelu — `protoswebmark23@gmail.com`.  
 **Martina IMAP:** `MARTINA_IMAP_*` (kad `martina.admin@protosweb.eu` bude live).  
-**Stripe donacije:** edge fn `donation-checkout` + `stripe-webhook`; secrets u Supabase (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `SITE_URL`). **`STRIPE_SECRET_KEY` još nedostaje** (2026-07-11).
+**Stripe donacije (LIVE 2026-07-11):** edge fn `donation-checkout`, `donation-confirm` (backup), `stripe-webhook`; secrets u Supabase (`STRIPE_SECRET_KEY` = `sk_live_`, `STRIPE_WEBHOOK_SECRET` = **live** `whsec_`, `SITE_URL`). Webhook URL: `https://laqnnzavwbojntfiqmxj.supabase.co/functions/v1/stripe-webhook`. Admin: `/admin/donacije`. Docs: `Protos-Web/docs/stripe-donations.md`.
 
 Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 
@@ -334,9 +334,10 @@ Sesija: `memory/sessions/2026-07-10-incident-recovery.md`
 - [x] Live test: kontakt forma + newsletter (2026-07-07)
 - [x] Env audit — sve platforme (2026-07-07)
 - [x] Keep-alive cron nakon no-verify-jwt deploya
+- [x] Stripe donacije LIVE (2026-07-11, `13a6083`) — Checkout + webhook + backup confirm
 - [ ] Cloudflare MFA (My Profile → 2FA)
 - [ ] Upisati prave URL-ove u `src/lib/config/team-profiles.ts` (TikTok, GoLance, Upwork, studio Facebook…)
-- [ ] Opcionalno: donacije, Turnstile, Upstash, Brevo list ID
+- [ ] Opcionalno: Turnstile, Upstash, Brevo list ID
 
 ## Korisnik
 
