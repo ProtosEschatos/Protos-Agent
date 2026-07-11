@@ -1,92 +1,78 @@
-# Session 2026-07-11 — Multi-inbox, Stripe donacije LIVE, i18n O meni
+# Session 2026-07-11 — Inbox, Stripe LIVE, i18n, Admin Console v3.0
 
-**Repos:** Protos-Web `077e99f` · Protos-Agent `48ea569` (main, pushed)  
+**Repos:** Protos-Web `3c039ed` · Protos-Agent (memory sync)  
 **Live:** https://www.protosweb.eu  
 **Supabase:** `laqnnzavwbojntfiqmxj`  
-**Checkpoint:** 2026-07-11 22:49 — sve spremljeno u git memoriju
+**Checkpoint:** 2026-07-11 23:10
 
 ## Commits (kronološki, 2026-07-11)
 
 | SHA | Opis |
 |-----|------|
 | `7d18a6c` | Multi-mailbox IMAP + Martina profil |
-| `106dcd0` | Memory docs |
-| `41ddca3` | Jedan donation gumb (bez progress/ciljeva) |
-| `48fc01c` | DB migracija donations + `resources` cause |
+| `41ddca3` | Jedan donation gumb |
+| `48fc01c` | DB migracija donations + `resources` |
 | `287a547` | O meni i18n + lokalizirani about URL-ovi |
-| `13a6083` | Webhook SDK fix + donation-confirm backup + lokalizirani redirect |
-| `077e99f` | Protos-Web memorija sync (PROJECT-MEMORY + AGENTS) |
-| `48ea569` | Protos-Agent memorija sync (session + protos-web.md) |
+| `13a6083` | Stripe webhook SDK + donation-confirm backup |
+| `0ba7201` | Admin boot gate bypass |
+| `0871c0e` | Admin perf (Link nav, no Lenis/WebGL) |
+| `3c039ed` | **Admin Console v3.0** reskin |
+
+---
+
+## Admin Console v3.0 (`3c039ed`)
+
+### UI referenca (kanonski izgled)
+**Repo:** [Google-AI-Studio-Github-Connect](https://github.com/ProtosEschatos/Google-AI-Studio-Github-Connect)  
+Google AI Studio mock — slate/indigo „Console v3.0”, sidebar moduli, header sat + sync.
+
+### Implementacija u Protos-Web
+- `src/styles/admin-console.css` — scoped `.admin-console`
+- `AdminShell`, `AdminHeader`, `AdminSidebar`, `AdminLink` (Next.js client nav)
+- **Nema** Three.js / Lenis / cosmic orange u adminu
+- Docs: `Protos-Web/docs/admin-console.md`
+
+### Bugfixevi admina (večer)
+1. Boot veil prekrivao login → init script bypass (`0ba7201`)
+2. Sporo + scroll trzanje → full page reload fix + Lenis off (`0871c0e`)
+3. Izgled → Console v3.0 reskin (`3c039ed`)
 
 ---
 
 ## Admin multi-mailbox IMAP (`7d18a6c`)
 
-- `/admin/inbox` — 3 sandučića: Zoho (`dario.admin@protosweb.eu`), Gmail studio (`protoswebmark23@gmail.com`), Martina placeholder (`martina.admin@protosweb.eu`)
-- `src/lib/mail/mailboxes.ts`, `imap-client.ts`; server actions `adminListMailbox(mailboxId)`
-- Vercel Production: `GMAIL_STUDIO_IMAP_*`, `ZOHO_IMAP_*`
-- Martina: `MARTINA_IMAP_*` kad mailbox bude live
+- `/admin/inbox` — Zoho, Gmail studio, Martina placeholder
+- Vercel: `ZOHO_IMAP_*`, `GMAIL_STUDIO_IMAP_*`, `MARTINA_IMAP_*` (kad live)
 
 ---
 
 ## Stripe donacije — LIVE (`13a6083`)
 
-### User flow
-1. `/o-meni` → gumb „Podrži resurse studija” → modal (1–1000 EUR)
-2. `POST /api/donate` → Supabase edge `donation-checkout` → Stripe Checkout (`cs_live_...`)
-3. Nakon plaćanja → redirect na lokalizirani about URL + `?donation=success&session_id=cs_...`
-4. Stranica poziva `POST /api/donate/confirm` (backup ako webhook kasni)
-5. Webhook `stripe-webhook` → `donations.status = completed`
-6. Admin: `/admin/donacije`
+- Flow: `/o-meni` → Stripe Checkout → webhook + backup `donation-confirm`
+- Edge fn: `donation-checkout`, `donation-confirm`, `stripe-webhook`
+- Secrets (Supabase Edge): `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (**live** `whsec_`), `SITE_URL`
+- Admin: `/admin/donacije`
+- Docs: `docs/stripe-donations.md`
 
-### Edge funkcije (deploy `--no-verify-jwt`)
-| Fn | Trigger |
-|----|---------|
-| `donation-checkout` | `/api/donate` |
-| `donation-confirm` | `/api/donate/confirm` (backup) |
-| `stripe-webhook` | Stripe webhook POST |
-
-### Supabase Edge secrets (LIVE)
-| Secret | Vrijednost |
-|--------|------------|
-| `STRIPE_SECRET_KEY` | `sk_live_...` |
-| `STRIPE_WEBHOOK_SECRET` | **LIVE** `whsec_...` (ne test!) |
-| `SITE_URL` | `https://www.protosweb.eu` |
-
-### Poznati problem (riješen 2026-07-11 noć)
-- Plaćanje prolazi na Stripeu, ali admin ostaje `pending` → webhook nije uspješno ažurirao bazu (ručni HMAC verify + možda test/live `whsec_` mismatch)
-- Fix: Stripe SDK u webhooku + `donation-confirm` backup na success redirectu
-- **User mora provjeriti:** Stripe Dashboard → Webhooks → **Live mode** → endpoint URL + signing secret u Supabase
-
-### Ključni fajlovi
-- `src/components/features/donations/DonationModal.tsx`
-- `src/app/api/donate/route.ts`, `confirm/route.ts`
-- `supabase/functions/donation-checkout/index.ts`
-- `supabase/functions/donation-confirm/index.ts`
-- `supabase/functions/stripe-webhook/index.ts`
-- `docs/stripe-donations.md`
+**Napomena:** Webhook mora biti **live mode** u Stripe Dashboardu. Backup confirm na success redirectu ako webhook kasni.
 
 ---
 
 ## i18n O meni (`287a547`)
 
-- HR: naslov **O MENI** (ne O NAMA), tim **O timu**
-- Lokalizirani javni URL-ovi (middleware rewrite):
-  - hr `/o-meni`, en `/en/about`, de `/de/ueber-uns`, it `/it/chi-siamo`, es `/es/sobre-nosotros`
-- `src/lib/routes/localized-paths.ts`, `src/middleware.ts`, `main-nav.ts`
+- HR: **O MENI** / **O timu**
+- URL: `/o-meni`, `/en/about`, `/de/ueber-uns`, `/it/chi-siamo`, `/es/sobre-nosotros`
 
 ---
 
-## Martina profil (sve 5 jezika)
+## Martina profil
 
-- 5 godina iskustva; 3D inovacije; astronaut u portfolio showcase (privjesak)
-- `/o-meni` polje `experience` za Martinu
+- 5 god, 3D inovacije, astronaut showcase — svih 5 jezika
 
 ---
 
 ## Napomene
 
-- **Nema Payhip** u repou — samo Stripe Checkout
-- Supabase dashboard „No repository connected” — normalno; deploy GitHub Actions + Vercel CLI
-- Agent nema pristup user browseru — greške nakon paymenta debugirati Stripe webhook log + F12 konzola
-- Gmail App Password u chatu — rotirati po želji
+- Nema Payhip — samo Stripe
+- `ADMIN_SECRET` samo Vercel
+- Sljedeći opcionalni korak: port reference tabova (Brevo/Resend hub, Security terminal) 1:1 u Next admin

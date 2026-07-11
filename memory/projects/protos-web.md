@@ -88,7 +88,8 @@ src/lib/ai/providers.ts              # DeepSeek + opcionalno Gemini
 **Zoho IMAP:** `ZOHO_IMAP_*` na Vercelu — čita inbox u `/admin/inbox`.  
 **Gmail studio IMAP:** `GMAIL_STUDIO_IMAP_*` na Vercelu — `protoswebmark23@gmail.com`.  
 **Martina IMAP:** `MARTINA_IMAP_*` (kad `martina.admin@protosweb.eu` bude live).  
-**Stripe donacije (LIVE 2026-07-11):** edge fn `donation-checkout`, `donation-confirm` (backup), `stripe-webhook`; secrets u Supabase (`STRIPE_SECRET_KEY` = `sk_live_`, `STRIPE_WEBHOOK_SECRET` = **live** `whsec_`, `SITE_URL`). Webhook URL: `https://laqnnzavwbojntfiqmxj.supabase.co/functions/v1/stripe-webhook`. Admin: `/admin/donacije`. Docs: `Protos-Web/docs/stripe-donations.md`.
+**Stripe donacije (LIVE 2026-07-11):** vidi gore.  
+**Admin UI (Console v3.0, `3c039ed`):** referenca `ProtosEschatos/Google-AI-Studio-Github-Connect`; `src/styles/admin-console.css`; `docs/admin-console.md`.
 
 Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 
@@ -108,9 +109,13 @@ Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 **Uzrok:** `removeBootSsrVeil()` radio `element.remove()` na React-owned `#boot-ssr-veil`.  
 **Fix (`3bc309c`):** `display: none` umjesto remove; CSS `html.boot-complete #boot-ssr-veil { display: none }` već postoji.
 
-### 3. Prazan admin panel (boot veil)
-**Uzrok:** `#boot-ssr-veil` ostaje jer `AppChrome` za `/admin` preskače `PageLoader` ali ne zove `clearBootPending()` / `removeBootSsrVeil()`.  
-**Fix:** `AdminShell` + admin rute u `AppChrome` potpuno izvan boot gatea, PageLoadera, CookieBannera.
+### 3. Prazan / blokiran admin (boot veil)
+**Uzrok:** `#boot-ssr-veil` (cookie loader) prekriva `/admin` dok korisnik nije prihvatio kolačiće.  
+**Fix (`0ba7201`):** `BOOT_GATE_INIT_SCRIPT` preskače admin rute; `AppChrome` `useLayoutEffect`.
+
+### 3b. Admin spor / trzaje scroll
+**Uzrok:** `<a>` full reload + Lenis smooth scroll + Three.js pozadina.  
+**Fix (`0871c0e`, `3c039ed`):** `AdminLink` → Next.js `Link`; Lenis off na adminu; CSS-only bg; Console v3.0 UI ([Google-AI-Studio-Github-Connect](https://github.com/ProtosEschatos/Google-AI-Studio-Github-Connect)). Docs: `Protos-Web/docs/admin-console.md`.
 
 ### 4. Build: `Cannot access 'i' before initialization` (admin/stranice)
 **Uzrok:** `AdminStaticPagePanel` (server) + `Link` iz `@/routing` u istom webpack chunku → circular TDZ pri `npm run build`.  
