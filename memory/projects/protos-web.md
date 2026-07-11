@@ -50,7 +50,7 @@ src/lib/ai/providers.ts              # DeepSeek + opcionalno Gemini
 
 ### Dashboard sekcije
 1. **Sadržaj** — Blog (`blog_posts`), Portfolio (`portfolio_items`) — CRUD preko Supabase service role
-2. **Inbox** — Zoho Mail + `/admin/inbox` (tablica `contacts`)
+2. **Inbox** — `/admin/inbox`: Zoho IMAP (`dario.admin@protosweb.eu`), Gmail studio (`protoswebmark23@gmail.com`), Martina placeholder + kontakt forma (`contacts`)
 3. **Notifikacije** — upiti 7d, pretplatnici, DNS upozorenja, CMS status
 4. **Platforme** — Cloudflare, Vercel, Supabase, Resend, Brevo, GitHub, live site
 5. **Društvene mreže / freelance** — `src/lib/config/team-profiles.ts`; re-export `src/lib/config/social-links.ts` (`pending: true`, `href: '#'` dok nema URL)
@@ -85,8 +85,10 @@ src/lib/ai/providers.ts              # DeepSeek + opcionalno Gemini
 | `RESEND_API_KEY`, `BREVO_API_KEY` | Supabase Edge secrets | Vercel |
 | `KEEP_ALIVE_SECRET` | Supabase + GitHub cron | — |
 
-**Zoho Mail:** nema env var — inbox preko Cloudflare DNS MX (`mail.zoho.eu`).  
-**Stripe:** DB kolone (`stripe_session_id`, `stripe_price_id`) postoje — nema SDK/API integracije u kodu.
+**Zoho IMAP:** `ZOHO_IMAP_*` na Vercelu — čita inbox u `/admin/inbox`.  
+**Gmail studio IMAP:** `GMAIL_STUDIO_IMAP_*` na Vercelu — `protoswebmark23@gmail.com`.  
+**Martina IMAP:** `MARTINA_IMAP_*` (kad `martina.admin@protosweb.eu` bude live).  
+**Stripe donacije:** edge fn `donation-checkout` + `stripe-webhook`; secrets u Supabase (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `SITE_URL`). **`STRIPE_SECRET_KEY` još nedostaje** (2026-07-11).
 
 Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 
