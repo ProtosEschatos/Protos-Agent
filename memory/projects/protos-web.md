@@ -32,23 +32,20 @@ Privatna kontrolna ploča na **glavnoj domeni** (ne subdomena).
 - `.trim()` na `ADMIN_SECRET` i unesenu lozinku pri usporedbi
 - **Nema javnog nav linka** — `AdminNavLink` samo kad je session aktivan (skriveno za anon)
 
-### Ključne putanje
+### Ključne putanje (post-refaktor `8f600e8`)
 ```
-src/app/[locale]/admin/          # stranice (layout: force-dynamic)
-src/app/api/admin/               # login, logout, session
-src/lib/admin-auth.ts            # server HMAC verify
-src/lib/admin-auth-shared.ts     # edge-safe shared (middleware)
-src/lib/require-admin.ts         # server actions / queries guard
-src/lib/supabase-admin.ts        # service role client
-src/lib/admin/blog-queries.ts    # CMS read (bez 'use server')
-src/lib/admin/portfolio-queries.ts
-src/actions/admin-blog.ts        # CMS write (mutations)
-src/actions/admin-portfolio.ts
-src/actions/admin-notifications.ts
-src/actions/admin-status.ts      # DNS provjere
-src/lib/admin-hub-links.ts       # platforme, inbox, social placeholderi
-src/components/admin/AdminShell.tsx   # bypass boot veil u AppChrome
-src/components/admin/AdminLink.tsx    # interni linkovi bez next-intl routing
+src/app/[locale]/admin/              # admin rute (layout: force-dynamic)
+src/app/[locale]/admin/stranice/     # statičke stranice (o-meni, proces, usluge)
+src/app/api/admin/                   # login, logout, session, ai
+src/lib/auth/                        # admin-auth, admin-auth-shared, require-admin, rate-limit
+src/lib/queries/admin/               # blog.ts, portfolio.ts, memory.ts (CMS read)
+src/lib/config/                      # site.ts, seo.ts, admin-links.ts, team-profiles.ts, tech-stacks.ts
+src/lib/routes/main-nav.ts           # javni navbar (jedini izvor istine)
+src/actions/admin-*.ts               # CMS write (mutations)
+src/components/features/admin/       # AdminShell, AdminSidebar, AdminLink, panels, forms
+src/components/features/home/sections/  # Hero, Services, Process, DualStacksSection, OnlinePresence, …
+src/lib/agent-memory.ts              # GitHub fetch Protos-Agent memorije
+src/lib/ai/providers.ts              # DeepSeek + opcionalno Gemini
 ```
 
 ### Dashboard sekcije
@@ -56,7 +53,7 @@ src/components/admin/AdminLink.tsx    # interni linkovi bez next-intl routing
 2. **Inbox** — Zoho Mail + `/admin/inbox` (tablica `contacts`)
 3. **Notifikacije** — upiti 7d, pretplatnici, DNS upozorenja, CMS status
 4. **Platforme** — Cloudflare, Vercel, Supabase, Resend, Brevo, GitHub, live site
-5. **Društvene mreže / freelance** — `src/lib/team-profiles.ts` (Studio/Dario/Martina + freelance); re-export `social-links.ts` (`pending: true`, `href: '#'` dok nema URL)
+5. **Društvene mreže / freelance** — `src/lib/config/team-profiles.ts`; re-export `src/lib/config/social-links.ts` (`pending: true`, `href: '#'` dok nema URL)
 
 ### Supabase tablice (CMS)
 - `blog_posts` — title, slug, excerpt, content, language, is_published, **`author_slug`** (`dario`|`martina`|`both`, default `dario`)
@@ -80,10 +77,16 @@ src/components/admin/AdminLink.tsx    # interni linkovi bez next-intl routing
 | Secret | Gdje | Ne u |
 |--------|------|------|
 | `ADMIN_SECRET` | Vercel | Supabase |
+| `DEEPSEEK_API_KEY` | Vercel (Production + Preview) | browser |
+| `GITHUB_TOKEN` | Vercel (Production + Preview) | browser — **obavezno** ako je Protos-Agent privatan |
+| `GEMINI_API_KEY` | Vercel (opcionalno) | browser |
 | `SUPABASE_SERVICE_ROLE_KEY` | Vercel (+ GitHub CI) | browser, client |
 | `NEXT_PUBLIC_SUPABASE_*` | Vercel | — |
 | `RESEND_API_KEY`, `BREVO_API_KEY` | Supabase Edge secrets | Vercel |
 | `KEEP_ALIVE_SECRET` | Supabase + GitHub cron | — |
+
+**Zoho Mail:** nema env var — inbox preko Cloudflare DNS MX (`mail.zoho.eu`).  
+**Stripe:** DB kolone (`stripe_session_id`, `stripe_price_id`) postoje — nema SDK/API integracije u kodu.
 
 Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 
@@ -107,7 +110,11 @@ Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 **Uzrok:** `#boot-ssr-veil` ostaje jer `AppChrome` za `/admin` preskače `PageLoader` ali ne zove `clearBootPending()` / `removeBootSsrVeil()`.  
 **Fix:** `AdminShell` + admin rute u `AppChrome` potpuno izvan boot gatea, PageLoadera, CookieBannera.
 
-### 4. Build: `Cannot access 'n' before initialization`
+### 4. Build: `Cannot access 'i' before initialization` (admin/stranice)
+**Uzrok:** `AdminStaticPagePanel` (server) + `Link` iz `@/routing` u istom webpack chunku → circular TDZ pri `npm run build`.  
+**Fix (`b12a0f0`):** `AdminStaticPagePanel` označen `'use client'`.
+
+### 5. Build: `Cannot access 'n' before initialization` (stariji admin)
 **Uzrok:** Server admin stranice + `next-intl` `Link`/`routing` u istom webpack chunku → circular TDZ.  
 **Fix:**
 - `AdminLink` (`<a>`) na server admin komponentama
@@ -253,6 +260,37 @@ Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 
 Sesija: `memory/sessions/2026-07-11-branding-seo-stack.md`
 
+## Refaktor + branding + deploy audit (2026-07-11) ✅
+
+**Commits:** `8f600e8` (refaktor A–F), `b12a0f0` (docs + O nama branding + build fix)
+
+### Refaktor strukture (`8f600e8`)
+- `admin/pages/` → `admin/stranice/`
+- `components/sections/` → `components/features/home/sections/`
+- `components/admin/` → `components/features/admin/`
+- `lib/admin/*` → `lib/queries/admin/`, `lib/config/`, `lib/auth/`
+- `main-nav-routes.ts` → `lib/routes/main-nav.ts`
+- Obrisan mrtvi `AdminActivityFeed`
+
+### O nama branding (`b12a0f0`)
+- Hero: **„Protos Web — Full Stack Duo iz Zagreba.”** (5 jezika)
+- OG `/api/og?type=about` ažuriran
+
+### Full stack audit
+- Sav kod (edge fn, migracije, workflows, vercel.json, cloudflare docs) **commitan na GitHub**
+- Vercel env: `DEEPSEEK_API_KEY`, `GITHUB_TOKEN`, `ADMIN_SECRET` — **već postavljeni** (Dashboard)
+- Nema Cloudflare Worker koda u repou
+- Live smoke test: `/o-meni`, `/admin/*`, API rute — OK (2026-07-11)
+
+Sesija: `memory/sessions/2026-07-11-refactor-branding-deploy.md`
+
+### Commits (2026-07-11, nastavak)
+| SHA | Opis |
+|-----|------|
+| `3452b1a` | Admin sidebar = javni navbar + Sustav sekcija |
+| `8f600e8` | Refaktor lib/features/queries, admin/stranice |
+| `b12a0f0` | Docs sync, Full Stack Duo branding, AdminStaticPagePanel client fix |
+
 ### Sljedeće (sutra+)
 - [ ] GSC/Bing resubmit `https://protosweb.eu/sitemap.xml`
 - [ ] Korisnik pošalje URL-ove → update `team-profiles.ts` (jedan commit aktivira sve)
@@ -265,7 +303,7 @@ Sesija: `memory/sessions/2026-07-11-branding-seo-stack.md`
 
 Push na `main` → Vercel production. **Nakon svakog pusha provjeri** live URL — GitHub CI zelen ≠ automatski live. Branch protection na `main` zahtijeva CI check (admin push može bypass). **`ADMIN_SECRET` samo na Vercelu** — git revert ga ne vraća.
 
-Trenutni `main` @ `1baa74d`.
+Trenutni `main` @ **`b12a0f0`** — live na https://www.protosweb.eu (Vercel READY).
 
 ## Commits (incident recovery, 2026-07-10)
 
@@ -285,9 +323,8 @@ Revert baze: `e4a264c` (6.7.), zatim fixevi ispod. Trenutni `main` @ `5d062f9`.
 
 Sesija: `memory/sessions/2026-07-10-incident-recovery.md`
 
-## Otvoreno (2026-07-10)
+## Otvoreno (2026-07-11)
 
-- [ ] `/admin` dashboard HTTP 500 (login OK, render puca)
 - [ ] ProtosLogo framer-motion circle cx/cy warning (kozmetički)
 
 ## Ručni TODO (vlasnik)
@@ -296,7 +333,7 @@ Sesija: `memory/sessions/2026-07-10-incident-recovery.md`
 - [x] Env audit — sve platforme (2026-07-07)
 - [x] Keep-alive cron nakon no-verify-jwt deploya
 - [ ] Cloudflare MFA (My Profile → 2FA)
-- [ ] Upisati prave URL-ove u `src/lib/team-profiles.ts` (TikTok, GoLance, Upwork, studio Facebook…)
+- [ ] Upisati prave URL-ove u `src/lib/config/team-profiles.ts` (TikTok, GoLance, Upwork, studio Facebook…)
 - [ ] Opcionalno: donacije, Turnstile, Upstash, Brevo list ID
 
 ## Korisnik
