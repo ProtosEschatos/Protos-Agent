@@ -56,10 +56,10 @@ src/components/admin/AdminLink.tsx    # interni linkovi bez next-intl routing
 2. **Inbox** — Zoho Mail + `/admin/inbox` (tablica `contacts`)
 3. **Notifikacije** — upiti 7d, pretplatnici, DNS upozorenja, CMS status
 4. **Platforme** — Cloudflare, Vercel, Supabase, Resend, Brevo, GitHub, live site
-5. **Društvene mreže / freelance** — placeholderi u `src/lib/social-links.ts` (`pending: true`, `href: '#'`)
+5. **Društvene mreže / freelance** — `src/lib/team-profiles.ts` (Studio/Dario/Martina + freelance); re-export `social-links.ts` (`pending: true`, `href: '#'` dok nema URL)
 
 ### Supabase tablice (CMS)
-- `blog_posts` — title, slug, excerpt, content, language, is_published
+- `blog_posts` — title, slug, excerpt, content, language, is_published, **`author_slug`** (`dario`|`martina`|`both`, default `dario`)
 - `portfolio_items` — title, tag, description, image_url, project_url, featured, active, sort_order, language
 - `contacts` — kontakt forma
 - `subscribers` — newsletter
@@ -206,13 +206,66 @@ Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 
 ### Otvoreno (SEO faza 2b)
 - Portfolio `[slug]` rute kad `portfolio_items` ponovno imaju aktivne projekte
-- Off-page: GSC, Bing, Google Business, Clutch — ručno
+- Off-page: GSC/Bing resubmit sitemap, Google Business, Clutch — ručno
+- Real social/freelance URL-ovi u `team-profiles.ts` kad korisnik pošalje
 
 **Learning:** `memory/learnings/protos-web-seo-patterns.md`
 
-## Deploy (2026-07-10 napomena)
+## Branding + entity SEO (2026-07-11) — plan faze 0–5 ✅
 
-Push na `main` → Vercel production. **Nakon svakog pusha provjeri** `vercel ls` / live URL — GitHub CI zelen ≠ automatski live. Webhook ponekad kasni → `vercel redeploy` ili prazan commit. **`ADMIN_SECRET` samo na Vercelu** — git revert ga ne vraća.
+**Commit:** `1baa74d` — live na https://protosweb.eu
+
+### Tim & javni stackovi
+- Uloge (5 jezika): Dario = AI inženjer & Full Stack Cross-Web; Martina = Frontend/shop UI dizajnerica
+- `src/lib/tech-stacks.ts` — **javno** samo jezici/framework; infra (Supabase/Stripe/Cloudflare) **ne u UI**
+- `DualStacksSection` na `/o-meni` — Protos Web vs Bodulica vanilla (bez live shop linka)
+- Bodulica repo (`sandboxes/Bodulica`) — samo opis na Protos-Webu, repo nije diran
+
+### Social struktura (`team-profiles.ts`)
+- 3 grupe u `OnlinePresence`: **Studio** | **Dario** | **Martina** + freelance platforme
+- Instagram live: studio/Dario → `protos_eschatos`, Martina → `everybodycries`
+- TikTok, GoLance, Upwork itd. → `#` + `pending: true`
+
+### SEO entiteti
+- Fragment IDs: `/o-meni#dario-imsirovic`, `/o-meni#martina-markulin`
+- `AboutPage` JSON-LD + OG `/api/og?type=about`
+- Root metadata: oba autora, keywords `protos`, `protosweb`, ASCII `Imsirovic`
+- `creator-seo.ts`: Person `url` s locale fragmentima, `sameAs` samo live URL-ovi
+- Blog: `author_slug` migracija (remote ✅), byline, per-author JSON-LD, index `Blog`+`ItemList`
+- `llms.txt` ažuriran (tim, dva stacka)
+
+### SEO cilj (korisnik)
+- **Brand:** #1 za `Protos Web`, `protosweb`, `Protos Web Zagreb`
+- **Osobe:** top za `Dario Imsirović` / `Martina Markulin` + uloge
+- **`protos` solo:** generička riječ — entity layer postavljen, treba off-page + topical authority + vrijeme
+
+### GitHub hardening
+- Branch protection `main`: required **CI**
+- `security.yml`: critical audit bez `continue-on-error`
+- README: `SUPABASE_SERVICE_ROLE_KEY` u GitHub secrets tablici
+
+### Commits (2026-07-11)
+| SHA | Opis |
+|-----|------|
+| `7e8fea3` | GSC verification meta |
+| `cd657c4` | Odvojeni Instagram linkovi Dario/Martina |
+| `1baa74d` | Branding plan: stackovi, dual showcase, SEO entities, blog authorship |
+
+Sesija: `memory/sessions/2026-07-11-branding-seo-stack.md`
+
+### Sljedeće (sutra+)
+- [ ] GSC/Bing resubmit `https://protosweb.eu/sitemap.xml`
+- [ ] Korisnik pošalje URL-ove → update `team-profiles.ts` (jedan commit aktivira sve)
+- [ ] Portfolio projekti u `portfolio_items` + admin
+- [ ] Blog postovi s `author_slug` po autoru (topical authority)
+- [ ] IndexNow za Bing (opcionalno)
+- [ ] Ne commitati `public/design/`
+
+## Deploy (2026-07-11)
+
+Push na `main` → Vercel production. **Nakon svakog pusha provjeri** live URL — GitHub CI zelen ≠ automatski live. Branch protection na `main` zahtijeva CI check (admin push može bypass). **`ADMIN_SECRET` samo na Vercelu** — git revert ga ne vraća.
+
+Trenutni `main` @ `1baa74d`.
 
 ## Commits (incident recovery, 2026-07-10)
 
@@ -243,7 +296,7 @@ Sesija: `memory/sessions/2026-07-10-incident-recovery.md`
 - [x] Env audit — sve platforme (2026-07-07)
 - [x] Keep-alive cron nakon no-verify-jwt deploya
 - [ ] Cloudflare MFA (My Profile → 2FA)
-- [ ] Upisati prave URL-ove u `src/lib/social-links.ts` (Instagram itd.)
+- [ ] Upisati prave URL-ove u `src/lib/team-profiles.ts` (TikTok, GoLance, Upwork, studio Facebook…)
 - [ ] Opcionalno: donacije, Turnstile, Upstash, Brevo list ID
 
 ## Korisnik
@@ -253,5 +306,5 @@ Sesija: `memory/sessions/2026-07-10-incident-recovery.md`
 - Admin email: `dario.admin@protosweb.eu`
 - **Ne prikazivati placeholder/demo sadržaj** (portfolio, lažni projekti) dok nije stvarno spremno
 - **Push mora završiti live na Vercelu** — ne samo GitHub
-- Kad kaže "stranica ne radi" — testirati Playwright/browser, ne samo curl
+- **SEO ambicija:** #1 za `protos` na Googleu — entity layer postavljen; off-page i vrijeme ključni
 - Jako osjetljiv na regresije nakon promjena; preferira revert na poznato dobro stanje
