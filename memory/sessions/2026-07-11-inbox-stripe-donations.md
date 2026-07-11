@@ -1,8 +1,9 @@
 # Session 2026-07-11 — Multi-inbox, Stripe donacije LIVE, i18n O meni
 
-**Repos:** Protos-Web `13a6083` (main, pushed)  
+**Repos:** Protos-Web `077e99f` · Protos-Agent `48ea569` (main, pushed)  
 **Live:** https://www.protosweb.eu  
-**Supabase:** `laqnnzavwbojntfiqmxj`
+**Supabase:** `laqnnzavwbojntfiqmxj`  
+**Checkpoint:** 2026-07-11 22:49 — sve spremljeno u git memoriju
 
 ## Commits (kronološki, 2026-07-11)
 
@@ -14,6 +15,8 @@
 | `48fc01c` | DB migracija donations + `resources` cause |
 | `287a547` | O meni i18n + lokalizirani about URL-ovi |
 | `13a6083` | Webhook SDK fix + donation-confirm backup + lokalizirani redirect |
+| `077e99f` | Protos-Web memorija sync (PROJECT-MEMORY + AGENTS) |
+| `48ea569` | Protos-Agent memorija sync (session + protos-web.md) |
 
 ---
 
