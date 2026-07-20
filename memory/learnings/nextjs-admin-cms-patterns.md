@@ -1,4 +1,17 @@
-# Learning: Next.js 14 admin + Supabase CMS obrasci
+---
+id: nextjs-admin-cms-patterns
+project: Protos-Web
+extracted_from: 2026-07-06-01
+topics:
+  - nextjs
+  - admin
+  - supabase
+  - cms
+  - patterns
+  - error-fix
+---
+
+# Learning: Next.js admin + Supabase CMS obrasci
 
 **Projekt:** Protos-Web  
 **Tip:** `pattern` + `error-fix`  

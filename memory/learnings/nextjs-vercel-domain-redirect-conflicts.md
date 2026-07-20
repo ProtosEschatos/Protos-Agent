@@ -1,3 +1,15 @@
+---
+id: nextjs-vercel-domain-redirect-conflicts
+project: Protos-Web
+extracted_from: 2026-07-20-01
+topics:
+  - nextjs
+  - vercel
+  - redirects
+  - domain
+  - deploy-incident
+---
+
 # Learning: Vercel domain redirects vs Next.js `redirects()` — sukob
 
 **Datum:** 2026-07-20

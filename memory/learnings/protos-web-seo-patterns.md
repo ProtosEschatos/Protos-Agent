@@ -1,8 +1,21 @@
+---
+id: protos-web-seo-patterns
+project: Protos-Web
+extracted_from: 2026-07-11-01
+topics:
+  - seo
+  - nextjs
+  - next-intl
+  - hreflang
+  - creator-attribution
+  - json-ld
+---
+
 # Protos-Web — Next.js SEO i creator atribucija
 
 ## hreflang bez `/hr/` prefiksa
 
-`next-intl` s `localePrefix: 'as-needed'` — HR na rootu (`/o-meni`), ostali s prefiksom (`/en/o-meni`).
+`next-intl` s `localePrefix: 'as-needed'` — HR na rootu (`/o-nama`), ostali s prefiksom (`/en/about`).
 
 **Obrazac:** `buildPageMetadata()` u `src/lib/seo.ts` emitira:
 - `alternates.canonical` — locale-aware URL

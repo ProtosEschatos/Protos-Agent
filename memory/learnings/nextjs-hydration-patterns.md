@@ -1,3 +1,14 @@
+---
+id: nextjs-hydration-patterns
+project: Protos-Web
+extracted_from: 2026-07-10-01
+topics:
+  - nextjs
+  - hydration
+  - react-errors
+  - boot-veil
+---
+
 # Next.js hydration — obrasci (Protos-Web, 2026-07-10)
 
 ## Simptomi

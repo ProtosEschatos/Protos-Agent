@@ -22,7 +22,8 @@ so we mount this in one of three ways depending on the environment:
 
 ### Option A — Cursor hook (recommended when using Cursor)
 
-Add to `~/.cursor/hooks.json`:
+Ready to use. Copy `hooks.json.example` (repo root) to `~/.cursor/hooks.json`
+(or merge with existing) and adjust `AGENT_REPO` / `TARGET_REPO` paths.
 
 ```json
 {
@@ -31,10 +32,15 @@ Add to `~/.cursor/hooks.json`:
       "event": "post-tool-use",
       "match": {
         "tool": ["StrReplace", "Write", "EditNotebook"],
-        "path_glob": "**/src/app/[locale]/admin/**"
+        "path_glob": "**/Protos-Web/src/app/[locale]/admin/**"
       },
       "throttle_seconds": 1800,
-      "command": "node ~/.cursor/plugins/protos-agent/snapshot.mjs"
+      "env": {
+        "AGENT_REPO": "/home/protos/Protos-Agent",
+        "TARGET_REPO": "/home/protos/Protos-Web",
+        "PROJECT_SLUG": "protos-web"
+      },
+      "command": "node ${AGENT_REPO}/memory/scripts/checkpoint.mjs"
     }
   ]
 }
@@ -43,11 +49,15 @@ Add to `~/.cursor/hooks.json`:
 The hook fires at most once every 30 min per session, but only after actual
 admin-panel edits, so it never spams the memory repo during passive browsing.
 
-`snapshot.mjs` shells out to `git log -1`, reads current chat context via
-Cursor's `--print-transcript` flag (or via the transcript file at
-`~/.cursor/projects/*/agent-transcripts/*.jsonl`), calls
-`node memory/scripts/append-checkpoint.mjs` in the Protos-Agent repo, and
-pushes.
+The `checkpoint.mjs` script (`memory/scripts/checkpoint.mjs`, real, working):
+
+1. Refuses to run if the target working tree is dirty.
+2. Refuses if last checkpoint was < `MIN_INTERVAL_SEC` (default 1800s) ago.
+3. Refuses if no commits landed since the last checkpoint.
+4. Otherwise creates `memory/sessions/YYYY-MM-DD-checkpoint-NN.md` with
+   proper front-matter, lists commit shortlogs, regenerates the index,
+   validates, and pushes. If validator errors, keeps the file locally and
+   does not push.
 
 ### Option B — Kilo Code / Claude Code (agent-side cron)
 
@@ -111,6 +121,21 @@ Front-matter MUST follow the standard session schema
 
 ## Status
 
-Not yet automated — this file is a specification. Wire it via Option A/B/C
-when the user opts in. See session `2026-07-20-02` for the discussion that led
-to this skill.
+**Ready.** Option A ships as `memory/scripts/checkpoint.mjs` + `hooks.json.example`.
+Option B is per-agent-runtime configuration (Kilo/Claude Code); the checkpoint
+script itself is reused. Option C skeleton is not yet wired (needs GH App
+credentials to open PRs). See session `2026-07-20-02` for the design.
+
+## Manual invocation
+
+To fire a one-off checkpoint from the CLI (bypassing the throttle if needed):
+
+```bash
+MIN_INTERVAL_SEC=0 \
+AGENT_REPO=/home/protos/Protos-Agent \
+TARGET_REPO=/home/protos/Protos-Web \
+PROJECT_SLUG=protos-web \
+node /home/protos/Protos-Agent/memory/scripts/checkpoint.mjs
+```
+
+Use `DRY_RUN=1` to preview without writing.

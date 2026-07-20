@@ -1,3 +1,14 @@
+---
+id: bodulica-vanilla-seo-patterns
+project: Bodulica
+extracted_from: 2026-07-10-02
+topics:
+  - seo
+  - vanilla-spa
+  - cloudflare-pages
+  - supabase-edge
+---
+
 # Bodulica — vanilla SPA SEO i edge obrasci
 
 ## SPA SEO bez zasebnih HTML stranica

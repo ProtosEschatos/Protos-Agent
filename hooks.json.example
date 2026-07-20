@@ -1,0 +1,25 @@
+{
+  "//": "Copy to ~/.cursor/hooks.json (or merge with existing) to enable the",
+  "//1": "30-minute auto-snapshot for Protos-Web admin work. The hook fires at",
+  "//2": "most once every 1800s, and only after actual edits inside the admin",
+  "//3": "panel, so it never spams the memory repo during passive browsing.",
+  "//4": "",
+  "//5": "Adjust AGENT_REPO / TARGET_REPO paths to match your machine.",
+  "hooks": [
+    {
+      "event": "post-tool-use",
+      "match": {
+        "tool": ["StrReplace", "Write", "EditNotebook"],
+        "path_glob": "**/Protos-Web/src/app/[locale]/admin/**"
+      },
+      "throttle_seconds": 1800,
+      "env": {
+        "AGENT_REPO": "/home/protos/Protos-Agent",
+        "TARGET_REPO": "/home/protos/Protos-Web",
+        "PROJECT_SLUG": "protos-web",
+        "MIN_INTERVAL_SEC": "1800"
+      },
+      "command": "node ${AGENT_REPO}/memory/scripts/checkpoint.mjs"
+    }
+  ]
+}

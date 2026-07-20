@@ -1,3 +1,16 @@
+---
+id: protos-web-api-keys-vault
+project: Protos-Web
+extracted_from: 2026-07-20-01
+topics:
+  - api-keys
+  - encryption
+  - aes-256-gcm
+  - supabase
+  - rls
+  - vault
+---
+
 # Learning: Encrypted API keys vault (AES-256-GCM u Supabase)
 
 **Kontekst:** Protos-Web `/admin/kljucevi` — user je htio spremati stvarne API ključeve za razne servise (Sketchfab, OpenAI itd.) tako da ih server-side code može čitati bez izlaganja anon roli.
