@@ -471,15 +471,24 @@ Nove rute / tablice (sve pushano):
 - `/admin/assets` — `admin_assets` + bucket `admin-uploads`
 - `published_posts` tablica (`20260720171515`)
 
-**Konfigurator + Assets crash — FIX PR OTVOREN (čeka merge & live smoke):**
-- Fix commit [27c5f5e](https://github.com/ProtosEschatos/Protos-Web/commit/27c5f5e) na branchu `fix/admin-konfigurator-assets-crash-boundaries`
-- PR: <https://github.com/ProtosEschatos/Protos-Web/pull/41>
-- Root cause potvrđen: nula `error.tsx`/`global-error.tsx` u App Router-u → svaki client throw = bijeli ekran
+**Konfigurator + Assets crash — MERGED (PR #41, [7d1b51e](https://github.com/ProtosEschatos/Protos-Web/commit/7d1b51e)):**
+- Root cause: nula `error.tsx`/`global-error.tsx` u App Router-u → svaki client throw = bijeli ekran
 - Fix: `ClientErrorBoundary` reusable + 3 segment boundary-a (admin/locale/global) + per-panel wrap-ovi u ConfiguratorManager, AssetsWorkspace i sub-tabovima; `SceneErrorBoundary` proširen u ConfiguratorScene
-- Verifikacija lokalno: `tsc`, `eslint`, `next build` — sve zeleno
 - Sesija: `memory/sessions/2026-07-20-10-configurator-assets-crash-fix.md`
 - Learning: `memory/learnings/protos-web-app-router-error-boundaries.md`
-- **Sljedeće:** user merge → Vercel deploy → smoke `/admin/konfigurator` + `/admin/assets`; ako se scenario ponovi, sada je error poruka vidljiva pa ide precizan drugi PR
+
+**Sentry adoption — MERGED (PR #42, [690459a](https://github.com/ProtosEschatos/Protos-Web/commit/690459a)):**
+- `@sentry/nextjs@10.67.0` wired end-to-end (server + edge + client + instrumentation + withSentryConfig)
+- ClientErrorBoundary sad zove `Sentry.captureException` s tagovima; sve tri `error.tsx` također
+- Session Replay on-error-only (quota-friendly), source maps ON (`widenClientFileUpload`, `hideSourceMaps`), `tunnelRoute: '/monitoring'` (ad-blocker + CSP friendly)
+- Smoke test route: `/api/admin/sentry-test` (admin-guarded, `?mode=capture|throw`)
+- Postojeći `src/lib/integrations/sentry.ts` status widget netaknut — počne raditi čim env vars stignu
+- Sesija: `memory/sessions/2026-07-20-11-sentry-adoption.md`
+- Learning: `memory/learnings/protos-web-sentry-app-router-wiring.md`
+- **Sljedeće (user only):** postaviti u Vercel (Prod + Preview):
+  - `NEXT_PUBLIC_SENTRY_DSN` (Sentry → Settings → Projects → protosweb → Client Keys)
+  - `SENTRY_AUTH_TOKEN` (Sentry → Settings → Auth Tokens, scopes `project:read`, `project:releases`, `org:read`)
+  - Nakon deploy-a: `curl -H "Cookie: protos-admin-session=..." /api/admin/sentry-test` → verify event u Sentry Issues
 
 ### Ostalo otvoreno (2026-07-20+)
 
