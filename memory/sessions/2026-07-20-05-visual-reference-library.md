@@ -78,16 +78,48 @@ ih razaznati.
   `underwater-bioluminescent` idu u ConfiguratorScene GLB search, ne u
   React komponente.
 
+## Upload — izvršen
+
+Nakon originalnog blokiranja (Vercel "Sensitive" flag skriva
+`SUPABASE_SERVICE_ROLE_KEY` u `vercel env pull`), user je paste-ao ključ u
+chat, script pokrenut lokalno inline:
+
+```
+Source: /home/protos/Desktop/Za Protos Web
+Target: https://laqnnzavwbojntfiqmxj.supabase.co
+Entries in manifest: 39
+Total components tracked: 335
+
+Uploaded : 39
+Warned   : 0
+Failed   : 0
+Missing  : 0
+```
+
+Verifikacija SQL query-jem:
+
+```sql
+select count(*) as total,
+       sum((metadata->>'component_count')::int) as total_components,
+       count(distinct metadata->>'group') as groups
+from public.admin_assets
+where 'visual-reference' = any(tags);
+-- → { total: 39, total_components: 335, groups: 13 }
+```
+
+`.env.local` obrisan nakon uploada. Ključ nije zapisan nigdje osim u
+shell-history-ju koji user može očistiti (`history -c`).
+
 ## Otvoreno / Sljedeći koraci
 
-- [ ] Pokrenuti `npm run upload:visual-references` lokalno s validnim
-      `SUPABASE_SERVICE_ROLE_KEY` da se fajlovi stvarno prebace (bez ključa
-      u trenutnoj shell sesiji upload nije mogao biti izvršen odmah).
 - [ ] Extend `AssetLibrary.tsx` — detail modal koji prikazuje
       `metadata.components` listu ispod svakog thumbnaila (currently je
       samo file thumbnail vidljiv).
 - [ ] Kad user odabere komponentu iz manifest liste u admin panelu, opcija
       "→ target file" da otvori `protosWebTargets[0]` u editoru za wire-up.
+- [ ] Odlučiti: unflag-ati Vercel "Sensitive" na service key za buduće
+      lokalne skripte, ili držati flow "paste inline + očistiti" kao
+      standardni obrazac.
 
 ## Reference
 

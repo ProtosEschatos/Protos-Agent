@@ -12,7 +12,7 @@ topics:
   - decomposition
 ---
 
-# Protos-Web — vizualna referentna biblioteka (39 slika / >320 komponenti)
+# Protos-Web — vizualna referentna biblioteka (39 slika / 335 komponenti)
 
 ## TL;DR
 
@@ -53,7 +53,26 @@ thumbnaila umjesto knjižnice od ~320 pretraživih efekata.
 | `inspiration` | 2 fantasy scene (islands, underwater)                  | **Samo** za GLB inspiration, ne za direktni copy                                            |
 
 Full lista po slici je u `scripts/visual-references-manifest.mjs`.
-Ukupno: **39 fajlova, 320+ komponenti, 13 grupa.**
+Ukupno u produkciji (`admin_assets where 'visual-reference' = any(tags)`):
+**39 fajlova · 335 komponenti · 13 grupa** — potvrđeno SQL query-jem.
+
+Distribucija po grupama (2026-07-20):
+
+| Grupa         | Files | Components |
+|---------------|:----:|:----------:|
+| `cards`       |   4  |     48     |
+| `ui-controls` |   6  |     48     |
+| `motion`      |   4  |     44     |
+| `hero`        |   6  |     37     |
+| `background`  |   3  |     36     |
+| `icons`       |   4  |     28     |
+| `cursors`     |   2  |     24     |
+| `forms`       |   3  |     19     |
+| `loading`     |   2  |     17     |
+| `inspiration` |   2  |     10     |
+| `about`       |   1  |      8     |
+| `blog`        |   1  |      8     |
+| `services`    |   1  |      8     |
 
 ## Pipeline (dvostupanjski, idempotent)
 
@@ -105,6 +124,37 @@ const row = {
 Konzumacija u `/admin/assets` je automatska — postojeći `AssetLibrary`
 filtrira po tagu i renderira `metadata.components` (planirani PR: prikazati
 listu komponenti unutar detail modal-a).
+
+## Vercel "Sensitive" flag ↔ `vercel env pull`
+
+`vercel env pull` **ne izvlači vrijednosti** env vars-a koji su označeni kao
+"Sensitive" u Vercel dashboardu — u `.env.local` ih upisuje s **praznom
+vrijednosti** (`SUPABASE_SERVICE_ROLE_KEY=""`), bez upozorenja. Skripta zbog
+toga tvrdi da varijable nema.
+
+Za automatizirani lokalni upload s Vercel-managed ključem:
+
+- ili maknuti "Sensitive" flag u dashboardu (env vars ostaju enkriptirane, ali
+  se izvlače kroz CLI),
+- ili paste-ati ključ ručno u shell inline: `SUPABASE_SERVICE_ROLE_KEY="…" node scripts/…`.
+
+`.env.local` file **treba obrisati** nakon uploada da secret ne ostane
+lokalno.
+
+## `.env.local` parsing edge-case
+
+Node-ov `--env-file`, `process.loadEnvFile()` i `env $(grep …)` pattern svi
+mogu doći do rezultata gdje je vrijednost okružena literalnim navodnicima
+(`SUPABASE_URL="https://…"` — navodnici su dio vrijednosti). Skripta stripa
+surrounding quote-ove i trima whitespace, inače `fetch()` javlja
+`ERR_INVALID_URL: "https://…"/storage/…`.
+
+```js
+function cleanEnv(v) {
+  if (!v) return ''
+  return v.trim().replace(/^['"]|['"]$/g, '')
+}
+```
 
 ## Zamke koje smo izbjegli
 
