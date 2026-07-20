@@ -353,3 +353,91 @@ Sesija: `memory/sessions/2026-07-10-incident-recovery.md`
 - **Push mora završiti live na Vercelu** — ne samo GitHub
 - **SEO ambicija:** #1 za `protos` na Googleu — entity layer postavljen; off-page i vrijeme ključni
 - Jako osjetljiv na regresije nakon promjena; preferira revert na poznato dobro stanje
+
+## 2026-07-17 → 19 (historijski) — Vue eksperiment i povratak
+
+**Kratka priča:** kroz 3 dana isprobana je puna Vue/Vite verzija Protos-Web-a s CF Pages deploy-em (funkcijama, cache purge middleware-om, DNS switch-om s Vercela). Konačna odluka **20. srpnja: napušteno, glavni site ostaje Next.js na Vercelu**. Sve buduće rade **samo na Next.js verziji** iz [`ProtosEschatos/Protos-Web`](https://github.com/ProtosEschatos/Protos-Web) glavne grane.
+
+Detalji tog perioda: `sessions/2026-07-17-*.md`, `sessions/2026-07-18-*.md`, `sessions/2026-07-19-*.md`.
+
+**Naslijeđeni patterni koje treba držati u Next verziji:**
+- **Migration lock**: MCP `apply_migration` UVIJEK popraćen SQL commitom u `supabase/migrations/` s istim version stamp-om. CI guard `scripts/assert-migration-history.sh` (portat iz Vue verzije kad zatreba).
+- **Placeholder secrets ban**: `scripts/check-env.mjs` mora fail-at ako env sadrži `placeholder`.
+- **Migration duplication**: user je jako osjetljiv na duplicirane migracije (svjedok prošlih incidenata). Uvijek provjeriti `list_migrations` prije `apply_migration`.
+- **Rotacija tajni**: u transkriptima iz tog perioda pojavljivale su se doslovne vrijednosti CF API token-a, R2 keys, admin lozinke i Supabase anon key-a. **Preporuka:** rotirati sve prije daljnjeg rada (novi CF token, novi R2 keys, novi Supabase anon key, nova admin lozinka).
+
+## 2026-07-20 — Next.js restore + Ultimate admin panel
+
+**Trenutni HEAD:** `42822a9aef` — sve pushano, remote == lokal osim zastarjelog lokalnog checkouta (backup grana `local-backup-2026-07-20`).
+
+### FAZA 1-5 (Ultimate admin panel)
+
+Cijeli plan u sesiji `sessions/2026-07-20-nextjs-restore-admin-ultimate-panel.md`. Kratak sažetak:
+
+| Faza | Isporuka | Ključni fajlovi |
+|---|---|---|
+| 1 | Toast infrastruktura | `src/lib/stores/toast-store.ts`, `src/components/ui/ToastProvider.tsx` |
+| 2 | Encrypted API keys vault (AES-256-GCM) | `src/lib/security/api-keys-crypto.ts`, `admin_api_keys` DB tablica, `/admin/kljucevi` |
+| 3 | Automation webhooks (multi-event, SSRF-protected) | `src/lib/queries/admin/automations.ts`, `automation_webhooks` DB tablica, `/admin/automations` |
+| 4 | 3D Configurator (R3F + Sketchfab) | `src/lib/stores/scene-store.ts`, `src/lib/config/sketchfab.ts`, `/admin/konfigurator` |
+| 5 | Dashboard refresh + real stats | `src/lib/queries/admin/panel-stats.ts`, `/admin` |
+
+### Nove DB tablice + migracije
+
+- `admin_api_keys` (migracija `20260720062823_admin_api_keys.sql`)
+- `automation_webhooks` (migracija `20260720063416_automation_webhooks.sql`)
+- Oba imaju RLS `service_role only`
+- Podaci šifrirani AES-256-GCM master key-om = env `ADMIN_KEYS_ENCRYPTION_KEY` (Vercel Production+Preview+Development)
+
+### Nove admin rute
+
+- `/admin/kljucevi` — vault
+- `/admin/automations` — webhooks
+- `/admin/konfigurator` — 3D configurator
+
+### Nove tajne dodane u Vercel (produkcija)
+
+- `ADMIN_KEYS_ENCRYPTION_KEY` (base64 32 bytes — obavezno)
+- `SKETCHFAB_API_TOKEN` (opcionalno; fallback = vault)
+- `CRON_SECRET` (sinkroniziran s GitHub Secrets)
+- `KEEP_ALIVE_SECRET` (Supabase Edge + GitHub Actions cron)
+
+### Nove tajne u Supabase Edge
+
+- `STRIPE_WEBHOOK_SECRET` (whsec_… live) — verificira signature; testirano 400 na test bez sig
+- `STRIPE_SECRET_KEY` (sk_live_…)
+
+### Deploy incidenti riješeni
+
+1. **Redirect loop `www` ↔ apex** — uklonjen `async redirects()` iz `next.config.js` (Vercel domain settings već rješava)
+2. **Admin Inbox Sync 308 loop** — `curl -L` + kanonski `www.` host
+3. **Supabase migration drift** — 3 drift migracije povučene s remote-a
+4. **TypeScript strict fixes** za nove tablice — regen `database.types.ts` + explicit casts
+5. **i18n-sync workflow uklonjen** — DeepSeek nije za prijevode
+
+### Male dokumentacijske rupe u `.env.example`
+
+Već u produkciji, ali nisu komentirane u templateu:
+- `CRON_SECRET`
+- `KEEP_ALIVE_SECRET`
+- `SKETCHFAB_API_TOKEN`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (novi Supabase naming)
+
+Backfill trivijalan, ali nije kritičan.
+
+### Zadnji audit (2026-07-20)
+
+- Live 200 na svih 7 lokala (`hr/en/de/it/es/sr/apex`)
+- 14/14 admin ruta = 308 na login (auth radi)
+- Kontakt/Newsletter/Donate API = 200
+- Stripe webhook = 400 na test (znači secret setan)
+- CI: sve zelene (ping, sync, Cloudflare DNS, Supabase, Build, Audit, Vercel)
+- Sadržaj u DB: 81 blog, 7 portfolio, 20 subscribera, 14 kontakata
+
+### Otvoreno (2026-07-20+)
+
+- [ ] Dizajn dorada (user čeka)
+- [ ] Locale drift zakrpat: de/it/es fale 27 MAIN + 23 LEGAL stringova; sr fali 4 MAIN
+- [ ] `.env.example` backfill s 4 nove env vars
+- [ ] Supabase advisor WARN-ovi (pg_net iz public schema, RLS policies na 4 tablice, function search_path)
+- [ ] Rotacija tajni iz historijskih transkripata (CF token, R2 keys, Supabase anon, admin lozinka)
