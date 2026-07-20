@@ -1,7 +1,19 @@
-# Permanent Stack Specification — Protos Web v2
+# Preferred Stack for NEW Client Projects
 
-> ⚠️ **DEFINITIVE. This is the ONLY stack. Never suggest, install, or mention anything outside this list.**
-> **Nuxt 4 + Vue 3 + TypeScript (strict). Tailwind v4 via Nuxt UI v3. No exceptions.**
+> **Scope:** greenfield ProtosEschatos client projects that don't have an
+> existing stack yet. This file does **NOT** override the stack of any project
+> that already exists — those are documented in `memory/projects/<name>.md`
+> and their reality wins.
+>
+> As of 2026-07-20, **Protos-Web** runs on **Next.js 16 + React 19 + Vercel +
+> Supabase**, and **Bodulica** runs on **vanilla HTML/JS + Cloudflare Pages +
+> Supabase Edge**. Both are stable — do not migrate them without an explicit
+> user request. See `memory/projects/protos-web.md` and
+> `memory/projects/bodulica.md` for their real stacks.
+>
+> For a brand-new client project (no repo yet), the preferred baseline below
+> is **Nuxt 4 + Vue 3 + TypeScript + Tailwind v4 via Nuxt UI v3**, deployed to
+> Vercel with Supabase and Stripe. Deviate only when the client requires it.
 
 ---
 

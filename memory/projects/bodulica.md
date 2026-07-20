@@ -1,3 +1,17 @@
+---
+id: bodulica
+name: Bodulica
+site: https://bodulica.shop
+repo: https://github.com/ProtosEschatos/Bodulica
+status: stale
+last_updated: 2026-07-10
+---
+
+> **Napomena (audit 2026-07-20):** Status `stale` — projekt nije doticao od
+> 2026-07-10, a `Otvoreno` sekcija na dnu ovog dokumenta ima nerazriješene
+> stavke (Resend/Brevo/Gmail IMAP env vars, `CRON_SECRET`). Prije sljedeće
+> sesije provjeri s ownerom je li produkcija još stabilna.
+
 # Bodulica
 
 **Repo:** [ProtosEschatos/Bodulica](https://github.com/ProtosEschatos/Bodulica)  

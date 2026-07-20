@@ -1,3 +1,24 @@
+---
+id: 2026-07-17-01
+date: 2026-07-17
+project: Protos-Web
+title: Vue admin cutover, CF Pages migracija, DNS switch
+commits:
+  - e772d5d
+learnings: []
+topics:
+  - vue
+  - cf-pages
+  - apartman-mihael
+  - mark23
+  - zapier-remove
+  - dns-switch
+  - supabase-anon-rotate
+  - webgl-single-context
+  - ssg
+  - cross-browser
+  - historical
+---
 # Session 2026-07-17 → 18 (rano) — Vue admin cutover, CF Pages migracija, DNS switch
 
 **Sesija:** `5f7f037c` (15:31 → 03:32, ~12h)

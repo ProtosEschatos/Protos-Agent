@@ -1,3 +1,47 @@
+---
+id: 2026-07-20-01
+date: 2026-07-20
+project: Protos-Web
+title: Next.js restore, Ultimate admin panel (FAZA 1-5), redirect loop fix
+commits:
+  - 674bfa568d
+  - 5d68ce6c8a
+  - 2b9fdbd774
+  - 6a0f64e3be
+  - ac4b93de3b
+  - b62e828590
+  - a53a78c7e8
+  - d4eb3fb942
+  - 8eee3c4b4e
+  - 5b19770b9a
+  - e482850d79
+  - 42822a9aef
+learnings:
+  - protos-web-api-keys-vault
+  - nextjs-vercel-domain-redirect-conflicts
+topics:
+  - nextjs-restore
+  - toast
+  - zustand
+  - api-keys-vault
+  - aes-256-gcm
+  - rls
+  - automation-webhooks
+  - ssrf
+  - 3d-configurator
+  - react-three-fiber
+  - sketchfab
+  - dashboard
+  - supabase-migrations
+  - redirect-loop
+  - cron
+  - admin-inbox-sync
+  - analytics
+  - google-business
+  - plausible
+  - ga4
+  - stripe-webhook
+---
 # Session 2026-07-20 — Next.js restore, Ultimate admin panel (FAZA 1-5), redirect loop fix
 
 **Sesije:** `2baf67f2` (02:39) + `06a0c810` (04:02) + `6e2da65d` (05:32) + `b3c22b21` (05:47) + `1a3c2640` (12:17, trenutna)

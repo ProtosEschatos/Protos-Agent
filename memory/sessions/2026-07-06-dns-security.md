@@ -1,3 +1,20 @@
+---
+id: 2026-07-06-02
+date: 2026-07-06
+project: Protos-Web
+title: 2026-07-06 — Email DNS + security hardening
+commits:
+  - 778db23
+learnings: []
+topics:
+  - dns
+  - email
+  - resend
+  - brevo
+  - zoho
+  - cloudflare
+  - security
+---
 # 2026-07-06 — Email DNS + security hardening
 
 ## Done

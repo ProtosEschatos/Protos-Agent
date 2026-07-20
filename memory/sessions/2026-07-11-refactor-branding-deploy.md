@@ -1,3 +1,26 @@
+---
+id: 2026-07-11-03
+date: 2026-07-11
+project: Protos-Web
+title: Refaktor, branding, full stack audit (2026-07-11)
+commits:
+  - 3452b1a
+  - 8f600e8
+  - b12a0f0
+learnings: []
+topics:
+  - refactor
+  - admin-stranice
+  - features
+  - full-stack-audit
+  - branding
+  - vercel
+  - supabase
+  - cloudflare
+  - deepseek
+  - zoho
+  - stripe
+---
 # Sesija: Refaktor, branding, full stack audit (2026-07-11)
 
 **Protos-Web `main`:** `b12a0f0` (synced GitHub + Vercel READY)  

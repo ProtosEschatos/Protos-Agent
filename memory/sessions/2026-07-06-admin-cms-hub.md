@@ -1,3 +1,23 @@
+---
+id: 2026-07-06-01
+date: 2026-07-06
+project: Protos-Web
+title: Admin panel + CMS hub (Protos-Web)
+commits:
+  - 3817dcf
+  - 5931c9a
+  - 64c140d
+  - 6e081d5
+learnings:
+  - nextjs-admin-cms-patterns
+topics:
+  - admin
+  - cms
+  - supabase
+  - next-intl
+  - security
+  - vercel
+---
 # Sesija 2026-07-06 — Admin panel + CMS hub (Protos-Web)
 
 ## Cilj korisnika

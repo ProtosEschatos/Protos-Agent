@@ -1,3 +1,28 @@
+---
+id: 2026-07-10-02
+date: 2026-07-10
+project: Protos-Web
+title: Incident recovery, admin login, portfolio cleanup, hydration fix (Protos-Web)
+commits:
+  - c5e891d
+  - 66af432
+  - 92403e8
+  - 98772b2
+  - 9861587
+  - 4834a6b
+  - 3bc309c
+learnings:
+  - nextjs-hydration-patterns
+topics:
+  - revert
+  - admin-auth
+  - portfolio
+  - hydration
+  - navbar
+  - vercel
+  - i18n
+  - boot-veil
+---
 # Sesija 2026-07-10 — Incident recovery, admin login, portfolio cleanup, hydration fix (Protos-Web)
 
 ## Kontekst / frustracija korisnika

@@ -1,3 +1,23 @@
+---
+id: 2026-07-11-01
+date: 2026-07-11
+project: Protos-Web
+title: Branding, dual stackovi, SEO entiteti
+commits:
+  - 7e8fea3
+  - cd657c4
+  - 1baa74d
+learnings: []
+topics:
+  - branding
+  - seo
+  - team-profiles
+  - tech-stacks
+  - dual-stacks
+  - blog-authorship
+  - instagram
+  - github-ci
+---
 # Sesija 2026-07-11 — Branding, dual stackovi, SEO entiteti
 
 **Repo:** ProtosEschatos/Protos-Web  

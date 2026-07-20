@@ -1,216 +1,157 @@
-# Kilo Agent Instructions
+# Protos-Agent — Agent Instructions
 
-## Memory & Knowledge Base (thoth-mem)
+Single source of truth for any AI coding agent (Cursor, Kilo Code, Claude Code,
+Codex CLI, or plain LLM chat) working on projects owned by
+[ProtosEschatos](https://github.com/ProtosEschatos).
 
-You have access to a persistent knowledge base via the `thoth-mem` MCP server. Use it to retain and retrieve knowledge across sessions so that every task benefits from past work.
+This file is intentionally tool-agnostic. Anything that mentions specific MCP
+servers, IDE features, or vendor UIs is optional and clearly labelled.
 
-### Repo memory (`memory/` in this repository)
+---
 
-Structured, git-versioned context lives in **`Protos-Agent/memory/`**:
+## 1. Golden Rule — Read Project Memory First
 
-| Path | Use |
-|------|-----|
-| `memory/projects/protos-web.md` | Protos-Web stack, admin CMS, secrets map, known fixes |
-| `memory/sessions/` | Session diaries (what shipped and why) |
-| `memory/learnings/` | Reusable patterns and error fixes |
-| `memory/index.jsonl` | Session index for quick lookup |
+Every project owned by ProtosEschatos has a single durable summary at
+`memory/projects/<name>.md` in **this repository**.
 
-**Before Protos-Web tasks:** read `memory/projects/protos-web.md`.  
-**After significant work:** append session + update project doc + add `index.jsonl` row; commit to this repo.
+Before touching a project's code you MUST:
 
-### Search Memory First
-Before starting any task — whether planning, coding, or testing — query `thoth-mem` for related past observations. Use relevant keywords from the current task to find prior decisions, patterns, errors, and project context.
+1. Read `memory/projects/<project>.md` in full (stack, secrets map, open items).
+2. Skim the last 3 entries in `memory/index.jsonl` that reference the same
+   project — you will find the current state of open work + known-broken things.
+3. Only then start planning or coding.
 
-### Store Learnings After Every Task
-After completing non-trivial work, store key information to `thoth-mem` so future sessions can build on it. Categorize observations with these types:
+The per-project doc is authoritative for that project's real stack. This
+repository also ships a `rules/stack.md` file that describes the **default**
+stack for **new** greenfield clients (Nuxt 4 + Vue 3 + Tailwind); it does **not**
+override an existing project. If the project doc says the project runs on
+Next.js + React + Vercel, that is the truth for that project — do not try to
+migrate it without an explicit user request.
 
-| Type | Use For |
-|------|---------|
-| `project-summary` | Overall project purpose, tech stack, directory layout |
-| `architecture-decision` | Design decisions, tradeoffs, rationale |
-| `error-fix` | Bugs encountered and how they were resolved |
-| `pattern` | Reusable code patterns, conventions, idioms found in the codebase |
-| `tool-config` | Tool setup, MCP configurations, CI/CD details |
-| `api-key-info` | API endpoints, authentication methods, rate limits |
+---
 
-When storing an observation, include:
-- The project name and language
-- A descriptive title summarizing the knowledge
-- The relevant `type` as a fact (`HAS_TYPE`)
-- Any additional facts that enrich searchability (e.g., `HAS_TOPIC`, `HAS_FILE`)
+## 2. Memory System (this repo)
 
-### Keep Memory Organized
-- Deduplicate: before storing, check if a similar observation already exists and update it instead.
-- Link related observations using cross-references in the content.
-- Periodically review and consolidate scattered observations.
+Git-versioned, plain-Markdown knowledge base. Full schema and rules live in
+[`memory/README.md`](./memory/README.md); the short version:
 
-## Context7 — Proactive Documentation Fetching
+| Path                    | Purpose                                                                     |
+| ----------------------- | --------------------------------------------------------------------------- |
+| `memory/projects/*.md`  | One evergreen summary per project (stack, secrets map, key paths, open TODO)|
+| `memory/sessions/*.md`  | One dated log per meaningful work checkpoint                                |
+| `memory/learnings/*.md` | Reusable patterns / error fixes (extracted from sessions, generalised)      |
+| `memory/index.jsonl`    | One JSON row per session; the machine-readable index                        |
 
-When working with a library, framework, or API, use the `context7` MCP server to fetch its documentation **before** writing code. This ensures:
-- You use current APIs and best practices
-- You avoid deprecated methods
-- You learn patterns that can be stored to memory
+**After significant work you MUST:**
 
-## ByteRover — Code Context (cipher_brv)
+1. Append a new file to `memory/sessions/YYYY-MM-DD-<slug>.md` with the YAML
+   front-matter described in `memory/README.md`.
+2. Update the relevant `memory/projects/<name>.md` (append to timeline, adjust
+   stack row if changed, tick / add TODOs).
+3. If the work yielded a reusable pattern or a hard-earned fix, add a file to
+   `memory/learnings/` and reference the source session in its front-matter.
+4. Add a row to `memory/index.jsonl` derived from the session's front-matter.
+5. Run `node memory/scripts/validate.mjs` locally to catch schema drift before
+   pushing. CI runs the same validator on every push touching `memory/**`.
 
-When working in a project, curate code-level context to ByteRover using `cipher_brv-curate` so the codebase knowledge graph stays current across sessions.
+**Never store real secret values.** Only the env-var name and where it lives
+(Vercel / GitHub / Supabase Edge / Cloudflare). If a secret ever appears
+literally in an agent transcript or PR body, treat it as compromised and open a
+"rotate" item in `memory/projects/<name>.md`.
 
-### Curate After Code Changes
-After non-trivial file edits, curate the changed files:
-- Provide `files` — paths to modified source files (max 5)
-- Provide `context` — what changed, why, and any patterns discovered
-- ByteRover processes asynchronously; no need to wait for completion
+---
 
-### Curate on Project Entry
-When entering a new project, seed ByteRover with its root context:
-- `folder` — root directory of the project (triggers full pack + analysis)
-- `context` — project purpose, tech stack, key directories
+## 3. Optional External Memory (only if configured)
 
-### BRV ↔ thoth-mem Relationship
-- **thoth-mem**: session summaries, architecture decisions, config, errors, learnings
-- **ByteRover**: code-level knowledge — file paths, code patterns, project structure, symbol relationships
-- Always curate to BOTH after non-trivial work (unless no code changed)
+Some agents / IDEs support persistent knowledge-graph MCP servers such as
+`thoth-mem`, ByteRover, Context7, mem0. If they are available:
 
-## Git & GitHub — Cross-Project Awareness
+- Treat them as **derived, disposable indices** over the git-versioned memory
+  in this repo, not as separate sources of truth.
+- The git repo wins on every conflict. If a graph observation contradicts a
+  file under `memory/`, update the graph, not the file (unless the file is
+  actually stale and you fix it explicitly in the same commit).
+- If a project doc changes, re-index; do not maintain the same fact by hand in
+  two places.
 
-Use the `git` and `github` MCP servers to understand repository structure and history before storing knowledge. When entering a project:
-1. Check `git remote` to identify the repository
-2. Note the tech stack from config files (package.json, Cargo.toml, etc.)
-3. Review recent commits for active areas of work
-4. Store a `project-summary` observation if one doesn't exist
+If none of those tools are configured, this section does not apply.
 
-## Agent Roster
+---
 
-The following agents are available in `~/.config/kilo/agents/`. Switch to an agent by referencing its name or purpose.
+## 4. Post-Work Workflow (agent-agnostic)
 
-| Agent | File | Purpose |
-|-------|------|---------|
-| Protos | `protos.md` | Primary orchestrator — plans and dispatches tasks to specialist agents. Never executes directly. |
-| Dev | `dev.md` | All coding — backend, frontend (Vue/TS/CSS), refactoring, implementation |
-| QA & Security | `qa-security.md` | Testing, debugging, Sentry triage, security audit, dependency scanning, code review |
-| Ops & Docs | `ops-docs.md` | Deployments (Railway, Cloudflare), CI/CD, Docker, infrastructure, documentation |
-| Assistant | `assistant.md` | Research, documentation lookup, daily briefings, Telegram, email, notifications |
+After every completed plan (all checks pass, work merged / pushed):
 
-## Custom Commands
+1. **Auto-commit** — if `git status` shows changes in the project workspace,
+   `git add -A && git commit -m "<conventional message>" && git push`.
+   Do not ask for permission (the user has already asked you to ship).
+2. **Auto-memorise** — write the session + project + learnings + index row as
+   described in §2. Do not ask for permission.
+3. **Auto-derive** — if any external memory graph is configured (§3), sync it.
+4. **Report** — leave the user a short summary: what shipped, what smoke-tested,
+   what remains open (linked to the relevant TODO in the project doc).
 
-Commands are defined in `~/.config/kilo/command/`. Each command triggers a specific agent.
+Never silently drop incomplete tasks. If a plan finishes with N of M items done,
+the leftover items belong in `memory/projects/<name>.md` under a dated
+`Otvoreno / Open` heading, not just in chat.
 
-| Command | Agent | Purpose |
-|---------|-------|---------|
-| `/deploy` | Ops & Docs | Build → test → deploy to Railway → notify |
-| `/review` | QA & Security | Review git diff and produce structured report |
-| `/daily` | Assistant | Daily briefing from GitHub, Sentry, Telegram, Railway |
-| `/security-scan` | QA & Security | Vulnerability scan and security report |
-| `/research <query>` | Assistant | Web research with sources and recommendations |
-| `/docs` | Ops & Docs | Generate or update documentation |
-| `/debug <issue>` | QA & Security | Analyze Sentry errors or stack traces |
-| `/notify <message>` | — | Send Telegram message (confirms first) |
-| `/design <description>` | Dev | Iterative visual design workflow with Polygram canvas |
-| `/run-plan <plan>` | Protos | Parse plan and dispatch tasks to matching agents |
+---
 
-## Skills
+## 5. Agent Roster (only if your runtime supports subagent dispatch)
 
-Skills are reusable instruction bundles in `~/.config/kilo/skills/`. Load them with the `skill` tool when a task matches.
+Some agent runtimes (Cursor subagents, Kilo Code agents, Claude Code
+subagents) allow named specialists. Files under `agents/` describe an
+opinionated Kilo Code roster. Cursor users can safely ignore that folder — the
+built-in Cursor subagents (`explore`, `generalPurpose`, `shell`, `browser-use`,
+`ci-investigator`, …) cover the same needs.
 
-| Skill | File | Use When |
-|-------|------|----------|
-| Deploy Workflow | `deploy-workflow.md` | Railway deployments, CI/CD |
-| Security Review | `security-review.md` | Security audits, vulnerability scanning |
-| Daily Briefing | `daily-briefing.md` | Aggregating daily status across services |
-| Documentation Patterns | `documentation-patterns.md` | Writing READMEs, API docs, ADRs, changelogs |
-| Design System | `design-system.md` | CSS best practices, component patterns, accessibility, animations |
-| Code Review | `code-review.md` | Reviewing git diffs, code quality, bug detection |
-| Security Audit | `security-audit.md` | Dependency scanning, CSP/CORS, RLS policies, vulnerability checks |
-| Code Simplify | `code-simplify.md` | Refactoring, reducing complexity, removing dead code |
-| Frontend Engineer | `frontend-engineer.md` | Vue 3 / Nuxt 4 UI/UX, Nuxt UI v3 components, Tailwind theming |
-| DevOps Engineer | `devops-engineer.md` | Railway/Vercel/Cloudflare deployments, CI/CD, infrastructure |
-| Docs Writer | `docs-writer.md` | README, ADR, changelogs, API documentation |
-| Deep Research | `deep-research.md` | Multi-source web research with cited sources and recommendations |
+If you dispatch a subagent, always instruct it to read this file and the
+relevant `memory/projects/<name>.md` before doing anything.
 
-## Agent Selection Strategy (MANDATORY)
+---
 
-After plan mode completes, you MUST select the most appropriate agent for implementation:
+## 6. Skills and Commands (optional)
 
-| Task Type | Agent |
-|-----------|-------|
-| UI/UX design, HTML/CSS, Vue/TS implementation, visual polish | Dev |
-| Backend, API, database, general implementation | Dev |
-| Code simplification, refactoring, cleanup | Dev |
-| Writing tests, debugging failures, log/Sentry analysis | QA & Security |
-| Security auditing, dependency scanning | QA & Security |
-| Code review, quality analysis | QA & Security |
-| Deployments, CI/CD, Railway, Cloudflare | Ops & Docs |
-| Documentation, README, ADRs, changelogs, markdown | Ops & Docs |
-| Research, documentation lookup | Assistant |
-| Daily briefings, Telegram, reminders, email | Assistant |
+Reusable instruction bundles live in `skills/` and slash-command definitions in
+`command/`. They were authored for Kilo Code — Cursor users may load them
+manually via the `Skill` mechanism (`.cursor/skills/`) or ignore them entirely.
+They are **not required reading**; the golden rule (§1) is.
 
-**Dispatch mechanism**: Tasks are dispatched via `task` tool with `subagent_type: "general"`. The `general` subagent is a transport channel — the agent identity is established by instructing the subagent to FIRST read the specialist agent's .md instructions file before executing the assigned task. This ensures the subagent operates with the full context, modes, skills, and constraints of the designated specialist (Dev, QA & Security, Ops & Docs, or Assistant).
+---
 
-Default: Protos orchestrates everything — planning, presenting, getting confirmation, and dispatching to the matching agent. Protos NEVER executes tasks directly. All work is delegated to Dev, QA & Security, Ops & Docs, or Assistant.
+## 7. Constraints (universal)
 
-Do NOT default to code mode for all tasks. Match the agent to the work.
+- **Do NOT commit local IDE config** (`kilo.json`, `.cursor/`, `.vscode/`) —
+  these are personal and gitignored.
+- **Do NOT modify agent definition files** (`agents/*.md`, `skills/*/SKILL.md`,
+  `rules/stack.md`) unless the user explicitly asks — they are policy files.
+- **Prefer project-level conventions** (found in `memory/projects/<name>.md`
+  and the project's own repo) over anything in this file.
+- **Every UI change is responsive** — test at ≤ 375 px and ≥ 1024 px.
+- **Never mention alternative AI tools** to the user unless they ask.
+- **Environment defaults** — assume Linux (user runs Linux Mint Cinnamon).
+  Editor is VS Codium; extensions come from Open VSX only.
 
-## Constraints
+---
 
-- **Do NOT commit local IDE config** (`kilo.json`, `kilo.jsonc`) — gitignored; not part of Protos-Web.
-- **Do NOT modify agent definition files** (`.kilo/agents/*.md`, `~/.config/kilo/agents/*.md`) unless explicitly asked.
-- **Always prefer project-level conventions** over personal preference.
-- **Always implement changes responsively**: Every UI/UX change, bugfix, or new feature must be tested and functional at both mobile (375px+) and desktop (1024px+) breakpoints. Never implement mobile-only or desktop-only without the counterpart.
-- **Environment**: You are running on Linux Mint Cinnamon. Editor is VS Codium (not VS Code). Extensions MUST come from Open VSX (open-vsx.org) only — NEVER suggest Microsoft Marketplace-only extensions. Always verify Open VSX availability before suggesting any extension.
-- **AI tooling**: User uses Kilo Code with DeepSeek V4 Pro. NEVER suggest alternative AI coding tools/agents (Cline, Copilot, Codeium, etc.).
-- **Memory discipline**: Before any task, query `thoth-mem` for related past observations. After completing non-trivial work, store to both `thoth-mem` AND `cipher_brv-curate`.
+## 8. Housekeeping — Contradictions & Drift
 
-## Permanent Stack
+If you find that a rule in this file, a project doc, a session log, or a
+learning file contradicts something you just observed in the real code /
+Vercel / Supabase, do not just work around it. Do all three:
 
-### Core
-| Layer | Technology |
-|-------|-----------|
-| Framework | **Nuxt 4** |
-| UI | **Vue 3 + TypeScript (strict)** |
-| CSS | **Tailwind v4** (via Nuxt UI v3 — NOT @nuxtjs/tailwindcss) |
-| UI Components | **Nuxt UI v3** (includes Tailwind v4 + form validation with Zod) |
+1. Fix the code / config so the reality matches the intent.
+2. Update the memory file(s) so future agents see the new truth.
+3. Note it in the session log so it shows up in the next daily briefing.
 
-### Required Packages
-**Frontend Core**: @nuxt/ui, @nuxt/icon, @nuxt/fonts, @nuxt/image, @nuxtjs/seo, @nuxtjs/i18n (hr/en/de/it/es, prefix_except_default), @nuxtjs/color-mode, @nuxt/scripts, nuxt-security
-**State**: @pinia/nuxt, @vueuse/nuxt + @vueuse/core + @vueuse/motion
-**Backend**: @nuxtjs/supabase (requires keys), drizzle-orm + drizzle-kit, zod, stripe, resend, @getbrevo/brevo, @calcom/embed-snippet
-**3D/Visual**: @tresjs/nuxt, gsap, @splinetool/vue-spline, vue3-lottie
-**Platform**: @vite-pwa/nuxt, @capacitor/core (+ ios/android), @capgo/capacitor-updater
-**Monitoring**: @sentry/nuxt, vue-toastification
-**Testing**: @nuxt/test-utils + vitest + @vue/test-utils
+**This file (AGENTS.md) wins over `rules/stack.md` and `agents/*.md`.**
+`memory/projects/<name>.md` wins over both, for that project.
 
-### Critical Patterns
-- **GSAP**: Must be `.client.ts` plugin (SSR crash otherwise)
-- **CSP**: Must allow WebGL (`'unsafe-eval'`, `'wasm-unsafe-eval'`, `blob:` workers)
-- **External scripts**: via `@nuxt/scripts` registry
-- **Drizzle SSL**: `false` locally, `true` in production
+---
 
-### Folder Structure (Nuxt 4)
-```
-app/components/  ← ALL Vue components (flat — no subfolders, Nuxt 4 bug)
-app/composables/  app/layouts/  app/middleware/  app/pages/  app/plugins/
-app/stores/  app/utils/  app/app.vue
-server/api/{stripe,booking,kontakt}/  server/middleware/  server/utils/
-shared/  content/  public/icons/  drizzle/  i18n/locales/
-```
+## 9. Meta
 
-### Deploy
-Vercel (client sites) | Railway (apps with DB) | Cloudflare (DNS) | Supabase (database)
-Capacitor + Capgo (mobile) | PWA (desktop) | n8n (automation)
-
-## Post-Execution Workflow Rule
-
-After every agent dispatch completes:
-1. Check memory for the original plan — diff what was done vs what was planned
-2. Put any missed/unfinished items in a todo list
-3. Immediately propose the best-suited agent to continue/fix/complete remaining work
-4. NEVER silently drop incomplete tasks
-
-## Post-Plan Automation Rule
-
-After every successfully implemented plan (all checks pass, work complete):
-
-1. **Auto-commit**: If `git status` shows changes in the project workspace → `git add -A` → `git commit` with descriptive message → `git push`. Do NOT ask for permission.
-2. **Auto-memorize**: Save a session summary + key learnings (patterns, errors, decisions) to `thoth-mem` using `thoth-mem_mem_save`. Do NOT ask for permission.
-3. **Auto-curate to ByteRover**: Curate changed files using `cipher_brv-curate` with `files` and `context`. Do NOT ask for permission.
-4. This rule applies to the project being worked on. If no git repo exists or no changes exist, skip auto-commit. Always run auto-memorize and auto-curate.
+- **Last audited:** 2026-07-20 (see `memory/sessions/2026-07-20-*.md` for the
+  audit that produced this rewrite).
+- **Owner:** Dario Imširović (`dario.admin@protosweb.eu`).
+- **Repo:** [ProtosEschatos/Protos-Agent](https://github.com/ProtosEschatos/Protos-Agent).

@@ -1,3 +1,35 @@
+---
+id: 2026-07-18-01
+date: 2026-07-18
+project: Protos-Web
+title: Admin login unblock, astronaut room widgets, showcase screenshots
+commits:
+  - 4b038cf
+  - c8324fc
+  - 26e36a3
+  - 3209e22
+  - 4cd064a
+  - 7d46df3
+  - 80054d8
+  - 20285b1
+  - 6f2e436
+learnings: []
+topics:
+  - admin-login
+  - supabase-auth
+  - astronaut-room
+  - firecrawl-screenshots
+  - showcase-bucket
+  - rls
+  - seo-pipeline
+  - hreflang
+  - json-ld
+  - cf-pages-git
+  - brand-sweep
+  - dm-sans
+  - system-boost-gate
+  - historical
+---
 # Session 2026-07-18 — Admin login unblock, astronaut room widgets, showcase screenshots
 
 **Sesije:** `f6302337` (03:36 → 16:33) + `a725099e` (17:21 → 20:14)

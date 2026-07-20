@@ -1,3 +1,24 @@
+---
+id: 2026-07-10-01
+date: 2026-07-10
+project: Bodulica
+title: Bodulica security, features, cleanup, SEO (Bodulica)
+commits:
+  - c8751ab
+  - 1cc96ea
+  - b3d92c9
+  - c74696d
+learnings:
+  - bodulica-vanilla-seo-patterns
+topics:
+  - seo
+  - security
+  - supabase
+  - stripe
+  - cloudflare
+  - admin
+  - instagram
+---
 # Sesija 2026-07-10 — Bodulica security, features, cleanup, SEO (Bodulica)
 
 ## Kontekst

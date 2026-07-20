@@ -1,3 +1,30 @@
+---
+id: 2026-07-19-01
+date: 2026-07-19
+project: Protos-Web
+title: Migration lock, CF cache poison fix, persistent 3D canvas
+commits:
+  - fab2aae
+  - d22a46d
+  - 164c969
+  - d4e74c1
+  - 1c036b9
+  - d0373a5
+learnings: []
+topics:
+  - migration-lock
+  - supabase-drift
+  - assert-migration-history
+  - placeholder-key-ban
+  - cf-cache-poison
+  - crossorigin
+  - functions-middleware
+  - pages-dev-redirect
+  - persistent-canvas
+  - fps-cap
+  - preview-readiness
+  - historical
+---
 # Session 2026-07-19 — Migration lock, CF cache poison fix, persistent 3D canvas
 
 **Sesija:** `18f754e9` (03:03 → 14:12, ~11h)

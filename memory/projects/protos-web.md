@@ -1,24 +1,39 @@
+---
+id: protos-web
+name: Protos-Web
+site: https://www.protosweb.eu
+repo: https://github.com/ProtosEschatos/Protos-Web
+status: active
+last_updated: 2026-07-20
+---
+
 # Protos-Web
 
 **Repo:** [ProtosEschatos/Protos-Web](https://github.com/ProtosEschatos/Protos-Web)  
 **Live:** https://www.protosweb.eu  
-**Domena:** `protosweb.eu` (Cloudflare DNS)  
+**Domena:** `protosweb.eu` (Cloudflare DNS, Vercel apex + `www`)  
 **Kontakt email:** `dario.admin@protosweb.eu` (Zoho inbox + Resend/Brevo slanje)
 
 ## Stack (stvarni — produkcija)
 
 | Sloj | Tehnologija |
 |------|-------------|
-| Framework | **Next.js 14** App Router |
-| Jezik | TypeScript |
-| Stil | Tailwind + CSS varijable (`--primary`, `--dark`, …) |
-| i18n | `next-intl` — `hr` (default), `en`, `de`, `it`, `es` |
+| Framework | **Next.js 16** App Router |
+| UI | **React 19** |
+| Jezik | TypeScript strict |
+| Stil | Tailwind v3 + CSS varijable (`--primary`, `--dark`, …) |
+| i18n | `next-intl` — `hr` (default), `en`, `de`, `it`, `es`, `sr` |
 | Baza | **Supabase** PostgreSQL (`laqnnzavwbojntfiqmxj`) |
 | Deploy | **Vercel** (auto iz `main`) |
 | Email | Resend (transakcijski), Brevo (newsletter), Zoho Mail (inbox) |
-| 3D admin pozadina | React Three Fiber (`three`) |
+| Plaćanja | **Stripe** Checkout Sessions (Session-based donations, EUR) |
+| 3D | React Three Fiber + drei (admin konfigurator + naslovnica pozadina) |
+| AI cascade | GPT-OSS-120B → DeepSeek → Gemini (`src/lib/ai/providers.ts`) |
+| Ruta "o nama" (hr) | `/o-nama` (bio `/o-meni` do 2026-07-20; 308 redirect u `next.config.js`) |
 
-> Napomena: `Protos-Agent/rules/stack.md` opisuje ciljani **Nuxt 4** stack za buduće projekte. **Protos-Web je Next.js** i ostaje takav dok se ne planira migracija.
+> `rules/stack.md` opisuje **preferirani** stack za buduće greenfield klijente
+> (Nuxt 4). Protos-Web je i ostaje Next.js 16 dok user eksplicitno ne zatraži
+> migraciju.
 
 ## Admin panel (`/admin`)
 
