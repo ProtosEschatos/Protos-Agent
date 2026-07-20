@@ -110,6 +110,11 @@ Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 
 ## Poznati bugovi i fix-evi
 
+### 0b. OPEN — Admin Assets + 3D Konfigurator crash (2026-07-20 večer)
+**Simptom:** `/admin/konfigurator` → bijeli ekran / error boundary. Assets također “ne rade”.  
+**Status:** dijagnosticirano u memoriji, **fix nije shipan**.  
+**Detalj:** `memory/sessions/2026-07-20-09-configurator-assets-crash.md` + sekcija “Večer 2026-07-20” u ovom fajlu.
+
 ### 0. Revert baze (2026-07-10)
 **Kontekst:** korisnik zahtijevao full revert na `e4a264c` (6.7. večer). Sve nakon toga uklonjeno s `main` force pushom. **Vercel env varijable nisu u gitu** — posebno `ADMIN_SECRET` treba ručno uskladiti nakon reverta.
 
@@ -383,7 +388,7 @@ Detalji tog perioda: `sessions/2026-07-17-*.md`, `sessions/2026-07-18-*.md`, `se
 
 ## 2026-07-20 — Next.js restore + Ultimate admin panel
 
-**Trenutni HEAD:** `42822a9aef` — sve pushano, remote == lokal osim zastarjelog lokalnog checkouta (backup grana `local-backup-2026-07-20`).
+**Trenutni HEAD:** `2e7480d` (priručnik, 2026-07-20 večer). Raniji landmark: Ultimate panel + restore (vidi FAZA 1–5 ispod).
 
 ### FAZA 1-5 (Ultimate admin panel)
 
@@ -449,10 +454,28 @@ Backfill trivijalan, ali nije kritičan.
 - CI: sve zelene (ping, sync, Cloudflare DNS, Supabase, Build, Audit, Vercel)
 - Sadržaj u DB: 81 blog, 7 portfolio, 20 subscribera, 14 kontakata
 
-### Otvoreno (2026-07-20+)
+### Večer 2026-07-20 — publish, priručnik, OPEN BUG
+
+**Trenutni HEAD (remote `main`):** `2e7480d` (priručnik). Prije toga: `39bc37a` publish+audit, `b17a8ab` JSON-LD XSS + PostCSS CVE.
+
+Nove rute / tablice (sve pushano):
+- `/admin/publish` — Bluesky, Mastodon, Threads, FB, IG, Ghost, Hashnode, Dev.to
+- `/admin/audit` — `audit_events` pregled
+- `/admin/prirucnik` — living README (stack, servisi, folderi, 12 pravila)
+- `/admin/assets` — `admin_assets` + bucket `admin-uploads`
+- `published_posts` tablica (`20260720171515`)
+
+**KRITIČNO OTVORENO — nastaviti ovdje:**
+- [ ] **`/admin/konfigurator` ruši stranicu** (bijeli ekran / error boundary) — user potvrdio tip crasha
+- [ ] **`/admin/assets` “ne radi”** (može biti isti client crash ili Supabase list/upload) — nije potvrđen zasebno
+- Sesija s dijagnozom: `memory/sessions/2026-07-20-09-configurator-assets-crash.md`
+- Hipoteze: R3F/`Environment`/`useGLTF` escape lokalnog `SceneErrorBoundary`; dijeljeni `useSceneStore` u `AssetLibrary`
+- **Fix još nije u Protos-Web** — kad se nastavi: browser repro → boundary oko cijelog ConfiguratorManager → smoke assets bez Canvasa → commit
+
+### Ostalo otvoreno (2026-07-20+)
 
 - [ ] Dizajn dorada (user čeka)
-- [ ] Locale drift zakrpat: de/it/es fale 27 MAIN + 23 LEGAL stringova; sr fali 4 MAIN
-- [ ] `.env.example` backfill s 4 nove env vars
-- [ ] Supabase advisor WARN-ovi (pg_net iz public schema, RLS policies na 4 tablice, function search_path)
-- [ ] Rotacija tajni iz historijskih transkripata (CF token, R2 keys, Supabase anon, admin lozinka)
+- [ ] Locale drift — većim dijelom backfillan isti dan; re-check ako treba
+- [ ] `.env.example` backfill s novijim env vars
+- [ ] Supabase advisor WARN-ovi (pg_net, public bucket listing, intentional anon SECURITY DEFINER RPCs)
+- [ ] Rotacija tajni iz historijskih transkripata (samo ako user zatraži — ne smarati)
