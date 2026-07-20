@@ -110,10 +110,16 @@ Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 
 ## Poznati bugovi i fix-evi
 
-### 0b. OPEN — Admin Assets + 3D Konfigurator crash (2026-07-20 večer)
+### 0b. Admin Assets + 3D Konfigurator crash (2026-07-20 večer → fix PR #41)
 **Simptom:** `/admin/konfigurator` → bijeli ekran / error boundary. Assets također “ne rade”.  
-**Status:** dijagnosticirano u memoriji, **fix nije shipan**.  
-**Detalj:** `memory/sessions/2026-07-20-09-configurator-assets-crash.md` + sekcija “Večer 2026-07-20” u ovom fajlu.
+**Root cause:** App Router stablo nije imalo nijedan `error.tsx` ni `global-error.tsx`; svaki client throw (R3F Canvas, HDRI, `useGLTF`, Sketchfab fetch) propuhao je do generic Next fallbacka. Obje rute dijelile `useSceneStore` preko `AssetLibrary`.  
+**Fix ([27c5f5e](https://github.com/ProtosEschatos/Protos-Web/commit/27c5f5e), [PR #41](https://github.com/ProtosEschatos/Protos-Web/pull/41)):**
+- Novi `src/components/ui/ClientErrorBoundary.tsx` (reusable class boundary).
+- Nova 3 Next.js segment boundary-a: `app/[locale]/admin/error.tsx`, `app/[locale]/error.tsx`, `app/global-error.tsx`.
+- `ConfiguratorManager`, `AssetsWorkspace` i sub-paneli (SceneChatPanel, ConfiguratorControls, svaki tab) wrappani u vlastite `ClientErrorBoundary`.
+- `ConfiguratorScene` — `SceneErrorBoundary` proširen na `<Primitive />`, `<ContactShadows>`, `<OrbitControls>`.  
+**Status:** PR otvoren, čeka merge → live smoke.  
+**Detalji:** `memory/sessions/2026-07-20-09-configurator-assets-crash.md` (dijagnoza), `2026-07-20-10-configurator-assets-crash-fix.md` (implementacija), `learnings/protos-web-app-router-error-boundaries.md` (pattern).
 
 ### 0. Revert baze (2026-07-10)
 **Kontekst:** korisnik zahtijevao full revert na `e4a264c` (6.7. večer). Sve nakon toga uklonjeno s `main` force pushom. **Vercel env varijable nisu u gitu** — posebno `ADMIN_SECRET` treba ručno uskladiti nakon reverta.
@@ -465,12 +471,15 @@ Nove rute / tablice (sve pushano):
 - `/admin/assets` — `admin_assets` + bucket `admin-uploads`
 - `published_posts` tablica (`20260720171515`)
 
-**KRITIČNO OTVORENO — nastaviti ovdje:**
-- [ ] **`/admin/konfigurator` ruši stranicu** (bijeli ekran / error boundary) — user potvrdio tip crasha
-- [ ] **`/admin/assets` “ne radi”** (može biti isti client crash ili Supabase list/upload) — nije potvrđen zasebno
-- Sesija s dijagnozom: `memory/sessions/2026-07-20-09-configurator-assets-crash.md`
-- Hipoteze: R3F/`Environment`/`useGLTF` escape lokalnog `SceneErrorBoundary`; dijeljeni `useSceneStore` u `AssetLibrary`
-- **Fix još nije u Protos-Web** — kad se nastavi: browser repro → boundary oko cijelog ConfiguratorManager → smoke assets bez Canvasa → commit
+**Konfigurator + Assets crash — FIX PR OTVOREN (čeka merge & live smoke):**
+- Fix commit [27c5f5e](https://github.com/ProtosEschatos/Protos-Web/commit/27c5f5e) na branchu `fix/admin-konfigurator-assets-crash-boundaries`
+- PR: <https://github.com/ProtosEschatos/Protos-Web/pull/41>
+- Root cause potvrđen: nula `error.tsx`/`global-error.tsx` u App Router-u → svaki client throw = bijeli ekran
+- Fix: `ClientErrorBoundary` reusable + 3 segment boundary-a (admin/locale/global) + per-panel wrap-ovi u ConfiguratorManager, AssetsWorkspace i sub-tabovima; `SceneErrorBoundary` proširen u ConfiguratorScene
+- Verifikacija lokalno: `tsc`, `eslint`, `next build` — sve zeleno
+- Sesija: `memory/sessions/2026-07-20-10-configurator-assets-crash-fix.md`
+- Learning: `memory/learnings/protos-web-app-router-error-boundaries.md`
+- **Sljedeće:** user merge → Vercel deploy → smoke `/admin/konfigurator` + `/admin/assets`; ako se scenario ponovi, sada je error poruka vidljiva pa ide precizan drugi PR
 
 ### Ostalo otvoreno (2026-07-20+)
 
