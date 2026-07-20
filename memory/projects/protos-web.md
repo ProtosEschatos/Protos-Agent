@@ -485,10 +485,22 @@ Nove rute / tablice (sve pushano):
 - Postojeći `src/lib/integrations/sentry.ts` status widget netaknut — počne raditi čim env vars stignu
 - Sesija: `memory/sessions/2026-07-20-11-sentry-adoption.md`
 - Learning: `memory/learnings/protos-web-sentry-app-router-wiring.md`
-- **Sljedeće (user only):** postaviti u Vercel (Prod + Preview):
-  - `NEXT_PUBLIC_SENTRY_DSN` (Sentry → Settings → Projects → protosweb → Client Keys)
-  - `SENTRY_AUTH_TOKEN` (Sentry → Settings → Auth Tokens, scopes `project:read`, `project:releases`, `org:read`)
-  - Nakon deploy-a: `curl -H "Cookie: protos-admin-session=..." /api/admin/sentry-test` → verify event u Sentry Issues
+
+**Sentry env wire-up + DSN konsolidacija (2026-07-20 večer, sesija 12):**
+- `NEXT_PUBLIC_SENTRY_DSN` postavljen na Vercelu (Production + Preview kao **jedan** Encrypted entry), verified u client bundleu (`/_next/static/chunks/0wts0fb01sd_r.js`) s tunnel route + Replay markerima
+- `SENTRY_AUTH_TOKEN`, `SENTRY_ORG_SLUG`, `SENTRY_PROJECT_SLUG` bili već pre-set 12h ranije u Prod + Preview
+- Dev DSN uklonjen — lokalni `npm run dev` ne šalje eventove (bez šuma iz HMR-a)
+- Deploy `bpyxl96pm-…` Ready 2026-07-20 23:xx, Sentry sad enabled u produkciji
+- Nauk (CLI ne zna multi-target single-call, workaround preko REST API-ja): `memory/learnings/vercel-env-multi-target-consolidation.md`
+- Sesija: `memory/sessions/2026-07-20-12-sentry-env-wireup-consolidation.md`
+- **Sljedeće (user, ~2 min u browseru):**
+  - Login kao admin → `https://www.protosweb.eu/api/admin/sentry-test?mode=capture&label=first-live-hit` → očekivano JSON `{"ok":true,"eventId":"…"}`
+  - Zatim `…?mode=throw&label=onrequesterror-check` (500 u browseru, drugi Issue u Sentryju — dokaz da `onRequestError` radi)
+  - Verify u Sentryju: <https://protoseschatos.sentry.io/issues/?project=4511604980580432>
+- **Hardening pending (kad user OK, ~15 min PR):**
+  - `ignoreErrors: ['ChunkLoadError', /ResizeObserver.*loop/, 'AbortError']` u `instrumentation-client.ts` (spriječi da benigni šum zapuni free tier)
+  - `blockSelector: 'canvas'` u `replayIntegration` (Replay preskoči 3D scenu na `/admin/konfigurator` — R3F frameloop = stotine DOM mutacija/s)
+  - Opcionalno: drop `replayIntegration` potpuno ako se Replay video-i ionako neće gledati (bundle -60 KB gzipped)
 
 ### Ostalo otvoreno (2026-07-20+)
 
