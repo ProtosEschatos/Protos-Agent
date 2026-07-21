@@ -497,10 +497,17 @@ Nove rute / tablice (sve pushano):
   - Login kao admin → `https://www.protosweb.eu/api/admin/sentry-test?mode=capture&label=first-live-hit` → očekivano JSON `{"ok":true,"eventId":"…"}`
   - Zatim `…?mode=throw&label=onrequesterror-check` (500 u browseru, drugi Issue u Sentryju — dokaz da `onRequestError` radi)
   - Verify u Sentryju: <https://protoseschatos.sentry.io/issues/?project=4511604980580432>
-- **Hardening pending (kad user OK, ~15 min PR):**
-  - `ignoreErrors: ['ChunkLoadError', /ResizeObserver.*loop/, 'AbortError']` u `instrumentation-client.ts` (spriječi da benigni šum zapuni free tier)
-  - `blockSelector: 'canvas'` u `replayIntegration` (Replay preskoči 3D scenu na `/admin/konfigurator` — R3F frameloop = stotine DOM mutacija/s)
-  - Opcionalno: drop `replayIntegration` potpuno ako se Replay video-i ionako neće gledati (bundle -60 KB gzipped)
+
+**Sentry hardening — OPEN PR #43 (sesija 13, [1efbedd](https://github.com/ProtosEschatos/Protos-Web/commit/1efbedd)):**
+- Fajl: [instrumentation-client.ts](https://github.com/ProtosEschatos/Protos-Web/blob/feat/sentry-hardening/instrumentation-client.ts) (+32 linije, jedini touched)
+- `ignoreErrors`: `ResizeObserver loop`, `ChunkLoadError`, `AbortError`, `Load failed` (Safari), `Non-Error promise rejection`, generic network fetch aborts — filtriraju predvidivi benigni šum koji bi zapunio free-tier quotu
+- `denyUrls`: `chrome-/moz-/safari-extension://` scheme-ovi — extension-injected scripts nisu naši bugovi
+- `replayIntegration.block: ['canvas', '.no-replay']` — R3F canvas na `/admin/konfigurator` preskočen jer WebGL frameloop mutira DOM na 60fps i choka Replay buffer. `.no-replay` je opt-out class za buduće PII komponente
+- Zero runtime cost na happy path; nema dependency izmjena; tsc + eslint + build zeleni
+- PR: <https://github.com/ProtosEschatos/Protos-Web/pull/43> — čeka user review + merge
+- Nauk (koje pattern-e uključiti u `ignoreErrors` + zašto): `memory/learnings/protos-web-sentry-hardening.md`
+- Sesija: `memory/sessions/2026-07-20-13-sentry-hardening-pr-43.md`
+- **Post-merge follow-up (1-2 tjedna):** pregledati Sentry Issues dashboard; ako i dalje ima šuma → proširiti listu; ako Replay video-i daju vrijednost samo za konfigurator → razmotriti route-based Replay sampling
 
 ### Ostalo otvoreno (2026-07-20+)
 
