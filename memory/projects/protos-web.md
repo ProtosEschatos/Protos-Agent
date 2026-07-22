@@ -110,6 +110,13 @@ Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 
 ## Poznati bugovi i fix-evi
 
+### 0c. Konfigurator white-screen + Sentry rip-out (2026-07-22) — FIXED
+**Simptom:** `/admin/konfigurator` bijeli ekran; poslije PR #45 cijeli admin locked/500.  
+**Fix lanac:** PR #47 (Sentry out + boundaries), #48–#49 (anon session RPC + ActivityBadge), #50 (`ADMIN_ASSET_CATEGORIES` out of `'use server'`).  
+**Status:** `/en/admin/konfigurator` → 200 (verified).  
+**Ops TODO:** osvježi `SUPABASE_SERVICE_ROLE_KEY` na Vercelu (PostgREST još 401 — writes/createSession).  
+**Sesija:** `memory/sessions/2026-07-22-06-sentry-rip-out-and-konfigurator-verify.md`
+
 ### 0b. Admin Assets + 3D Konfigurator crash (2026-07-20 večer → fix PR #41)
 **Simptom:** `/admin/konfigurator` → bijeli ekran / error boundary. Assets također “ne rade”.  
 **Root cause:** App Router stablo nije imalo nijedan `error.tsx` ni `global-error.tsx`; svaki client throw (R3F Canvas, HDRI, `useGLTF`, Sketchfab fetch) propuhao je do generic Next fallbacka. Obje rute dijelile `useSceneStore` preko `AssetLibrary`.  
@@ -477,7 +484,12 @@ Nove rute / tablice (sve pushano):
 - Sesija: `memory/sessions/2026-07-20-10-configurator-assets-crash-fix.md`
 - Learning: `memory/learnings/protos-web-app-router-error-boundaries.md`
 
-**Sentry adoption — MERGED (PR #42, [690459a](https://github.com/ProtosEschatos/Protos-Web/commit/690459a)):**
+**Sentry — REMOVED 2026-07-22 (PR #47, `5d046b6`):**
+- Integracija u potpunosti uklonjena (user request). Sekcije ispod su historija.
+- Close-out: `memory/sessions/2026-07-22-06-sentry-rip-out-and-konfigurator-verify.md`
+- Obriši dead `SENTRY_*` / `NEXT_PUBLIC_SENTRY_DSN` iz Vercel dashboarda kad hoćeš.
+
+**Sentry adoption — MERGED pa UKLONJEN (PR #42 historija):**
 - `@sentry/nextjs@10.67.0` wired end-to-end (server + edge + client + instrumentation + withSentryConfig)
 - ClientErrorBoundary sad zove `Sentry.captureException` s tagovima; sve tri `error.tsx` također
 - Session Replay on-error-only (quota-friendly), source maps ON (`widenClientFileUpload`, `hideSourceMaps`), `tunnelRoute: '/monitoring'` (ad-blocker + CSP friendly)
@@ -486,31 +498,22 @@ Nove rute / tablice (sve pushano):
 - Sesija: `memory/sessions/2026-07-20-11-sentry-adoption.md`
 - Learning: `memory/learnings/protos-web-sentry-app-router-wiring.md`
 
-**Sentry env wire-up + DSN konsolidacija (2026-07-20 večer, sesija 12):**
+**Sentry env wire-up + DSN konsolidacija (2026-07-20 večer, sesija 12) — historija:**
 - `NEXT_PUBLIC_SENTRY_DSN` postavljen na Vercelu (Production + Preview kao **jedan** Encrypted entry), verified u client bundleu (`/_next/static/chunks/0wts0fb01sd_r.js`) s tunnel route + Replay markerima
 - `SENTRY_AUTH_TOKEN`, `SENTRY_ORG_SLUG`, `SENTRY_PROJECT_SLUG` bili već pre-set 12h ranije u Prod + Preview
 - Dev DSN uklonjen — lokalni `npm run dev` ne šalje eventove (bez šuma iz HMR-a)
 - Deploy `bpyxl96pm-…` Ready 2026-07-20 23:xx, Sentry sad enabled u produkciji
 - Nauk (CLI ne zna multi-target single-call, workaround preko REST API-ja): `memory/learnings/vercel-env-multi-target-consolidation.md`
 - Sesija: `memory/sessions/2026-07-20-12-sentry-env-wireup-consolidation.md`
-- **Sljedeće (user, ~2 min u browseru):**
-  - Login kao admin → `https://www.protosweb.eu/api/admin/sentry-test?mode=capture&label=first-live-hit` → očekivano JSON `{"ok":true,"eventId":"…"}`
-  - Zatim `…?mode=throw&label=onrequesterror-check` (500 u browseru, drugi Issue u Sentryju — dokaz da `onRequestError` radi)
-  - Verify u Sentryju: <https://protoseschatos.sentry.io/issues/?project=4511604980580432>
 
-**Sentry hardening — OPEN PR #43 (sesija 13, [1efbedd](https://github.com/ProtosEschatos/Protos-Web/commit/1efbedd)):**
-- Fajl: [instrumentation-client.ts](https://github.com/ProtosEschatos/Protos-Web/blob/feat/sentry-hardening/instrumentation-client.ts) (+32 linije, jedini touched)
-- `ignoreErrors`: `ResizeObserver loop`, `ChunkLoadError`, `AbortError`, `Load failed` (Safari), `Non-Error promise rejection`, generic network fetch aborts — filtriraju predvidivi benigni šum koji bi zapunio free-tier quotu
-- `denyUrls`: `chrome-/moz-/safari-extension://` scheme-ovi — extension-injected scripts nisu naši bugovi
-- `replayIntegration.block: ['canvas', '.no-replay']` — R3F canvas na `/admin/konfigurator` preskočen jer WebGL frameloop mutira DOM na 60fps i choka Replay buffer. `.no-replay` je opt-out class za buduće PII komponente
-- Zero runtime cost na happy path; nema dependency izmjena; tsc + eslint + build zeleni
-- PR: <https://github.com/ProtosEschatos/Protos-Web/pull/43> — čeka user review + merge
-- Nauk (koje pattern-e uključiti u `ignoreErrors` + zašto): `memory/learnings/protos-web-sentry-hardening.md`
+**Sentry hardening — PR #43 merged pa UKLONJEN s #47:**
+- Historija ignoreErrors / Replay canvas block — više nije u kodu
 - Sesija: `memory/sessions/2026-07-20-13-sentry-hardening-pr-43.md`
-- **Post-merge follow-up (1-2 tjedna):** pregledati Sentry Issues dashboard; ako i dalje ima šuma → proširiti listu; ako Replay video-i daju vrijednost samo za konfigurator → razmotriti route-based Replay sampling
 
-### Ostalo otvoreno (2026-07-20+)
+### Ostalo otvoreno (2026-07-22+)
 
+- [ ] **Osvježi `SUPABASE_SERVICE_ROLE_KEY` na Vercelu** (PostgREST 401 — createSession/revoke/writes)
+- [ ] Obriši dead `SENTRY_*` env vars s Vercela
 - [ ] Dizajn dorada (user čeka)
 - [ ] Locale drift — većim dijelom backfillan isti dan; re-check ako treba
 - [ ] `.env.example` backfill s novijim env vars
