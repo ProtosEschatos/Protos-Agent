@@ -27,7 +27,7 @@ last_updated: 2026-07-22
 | Deploy | **Vercel** (auto iz `main`) |
 | Email | Resend (transakcijski), Brevo (newsletter), Zoho Mail (inbox) |
 | Plaćanja | **Stripe** Checkout Sessions (Session-based donations, EUR) |
-| 3D | React Three Fiber + drei (admin konfigurator + naslovnica pozadina) |
+| 3D | React Three Fiber + drei (admin konfigurator + naslovnica pozadina). Lokalni toolchain: Blender 4.0.2 → GLB → `gltf-transform`/`gltfjsx` → R3F. Krita (Flatpak) za teksture. Learning: `protos-web-local-3d-toolchain`. |
 | AI cascade | GPT-OSS-120B → DeepSeek → Gemini (`src/lib/ai/providers.ts`) |
 | Ruta "o nama" (hr) | `/o-nama` (bio `/o-meni` do 2026-07-20; 308 redirect u `next.config.js`) |
 
@@ -532,6 +532,7 @@ Nove rute / tablice (sve pushano):
 
 ### Ostalo otvoreno (2026-07-22+)
 
+- [x] Lokalni 3D toolchain (Krita Flatpak + GLTF CLI + Blender numpy fix) — sesija `2026-07-22-08`
 - [ ] **Osvježi `SUPABASE_SERVICE_ROLE_KEY` na Vercelu** (PostgREST 401 — createSession/revoke/writes)
 - [ ] Obriši dead `SENTRY_*` env vars s Vercela
 - [ ] Obriši leftover `GMAIL_STUDIO_*` s Vercela (kod već clean)
