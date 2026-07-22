@@ -114,7 +114,10 @@ Detalji: `Protos-Web/docs/security.md`, `docs/cloudflare-dns.md`
 **Simptom:** `/admin/konfigurator` bijeli ekran; poslije PR #45 cijeli admin locked/500.  
 **Fix lanac:** PR #47 (Sentry out + boundaries), #48–#49 (anon session RPC + ActivityBadge), #50 (`ADMIN_ASSET_CATEGORIES` out of `'use server'`).  
 **Status:** `/en/admin/konfigurator` → 200 (verified).  
-**Ops TODO:** osvježi `SUPABASE_SERVICE_ROLE_KEY` na Vercelu (PostgREST još 401 — writes/createSession).  
+**Ops TODO:** ~~osvježi `SUPABASE_SERVICE_ROLE_KEY`~~ — **ZABRANJENO nagovarati.**
+Key je već na Vercelu (owner 2026-07-22). Learning:
+`protos-web-service-role-already-on-vercel`. Stari 401 na verify = krivi client
+(service_role za read) → fixed anon RPC (#48–#49), ne missing env.  
 **Sesija:** `memory/sessions/2026-07-22-06-sentry-rip-out-and-konfigurator-verify.md`
 
 ### 0b. Admin Assets + 3D Konfigurator crash (2026-07-20 večer → fix PR #41)
@@ -402,6 +405,9 @@ Sesija: `memory/sessions/2026-07-10-incident-recovery.md`
 - **Ne izmišljati UI / logo** — slijedi reference i eksplicitan nalog; improvizacija = fail
 - Ship preko **PR + merge**; `origin/main` = SoT; ne `vercel env pull` bez odobrenja
 - Gmail IMAP **zauvijek van** dok eksplicitno ne zatraži povratak
+- **`SUPABASE_SERVICE_ROLE_KEY` je već na Vercelu** — NIKAD ne tražiti “osvježi/postavi” taj key (sesija 09)
+- Online 3D = live konfigurator (CSP/proxy/API keys), **ne** lokalni Blender/CLI install
+- Preferira hrvatski; jako osjetljiv na regresije i agentovo “svoje” rješenje umjesto naloga
 
 ## 2026-07-17 → 19 (historijski) — Vue eksperiment i povratak
 
@@ -532,15 +538,16 @@ Nove rute / tablice (sve pushano):
 
 ### Ostalo otvoreno (2026-07-22+)
 
-- [x] Lokalni 3D toolchain (Krita Flatpak + GLTF CLI + Blender numpy fix) — sesija `2026-07-22-08` (host tooling; **nije** fix za online konfigurator)
-- [ ] **Online konfigurator** — PR #64: GLB proxy + CSP. Još treba owner: osvježi `SUPABASE_SERVICE_ROLE_KEY` + postavi `SKETCHFAB_API_TOKEN` / `POLY_PIZZA_API_KEY` (ili vault)
-- [ ] **Osvježi `SUPABASE_SERVICE_ROLE_KEY` na Vercelu** (PostgREST 401 — createSession/revoke/writes/assets/vault)
-- [ ] Obriši dead `SENTRY_*` env vars s Vercela
+- [x] Lokalni 3D toolchain (Krita Flatpak + GLTF CLI) — sesija 08; **nije** online fix
+- [x] Online konfigurator CSP + GLB proxy — **PR #64 merged**
+- [x] `SUPABASE_SERVICE_ROLE_KEY` — **već na Vercelu**; ne tražiti refresh (sesija 09)
+- [ ] Sketchfab / Poly tabs: `SKETCHFAB_API_TOKEN` / `POLY_PIZZA_API_KEY` ili vault — **samo ako** owner koristi te importe
+- [ ] Obriši dead `SENTRY_*` env vars s Vercela (kad owner hoće)
 - [ ] Obriši leftover `GMAIL_STUDIO_*` s Vercela (kod već clean)
-- [ ] I'M logo: ako user nije zadovoljan liveom — **samo** pojačaj efekte / blizinu referenci, **bez** novih slova (sesija 07)
-- [ ] Showcase joystick (#58) — verified u PR; re-check mobile ako treba
-- [ ] SR blogovi + `localePrefix: 'never'` — **STOP** dok user ponovno ne zatraži (0 `sr` postova u DB kad prekinuto)
-- [ ] Locale drift — većim dijelom backfillan; re-check ako treba
+- [ ] I'M logo: ako nije zadovoljan — **samo** efekti, bez novih slova (sesija 07)
+- [ ] Showcase joystick (#58) — re-check mobile ako treba
+- [ ] SR blogovi + `localePrefix: 'never'` — **STOP** dok user ponovno ne zatraži
+- [ ] Locale drift — re-check ako treba
 - [ ] `.env.example` backfill s novijim env vars
-- [ ] Supabase advisor WARN-ovi (pg_net, public bucket listing, intentional anon SECURITY DEFINER RPCs)
-- [ ] Rotacija tajni iz historijskih transkripata (samo ako user zatraži — ne smarati)
+- [ ] Supabase advisor WARN-ovi (namjerni dijelom)
+- [ ] Rotacija tajni iz historijskih transkripata (**samo** ako user zatraži)

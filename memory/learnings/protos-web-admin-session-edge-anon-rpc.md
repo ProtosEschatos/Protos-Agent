@@ -26,8 +26,11 @@ Use `POST /rest/v1/rpc/verify_admin_session_by_hash` with
 only `revoked_at` + `expires_at`, `GRANT EXECUTE` to anon. Caller must
 already know the sha256 hash (no enumeration).
 
-Writes (`createSession`, revoke) still need a **valid** service_role on
-Vercel — rotate it when PostgREST returns 401 on privileged paths.
+Writes (`createSession`, revoke) still use service_role on Vercel.
+**Do not** tell the owner to “refresh” that key — it is already set
+(see `protos-web-service-role-already-on-vercel`). If writes fail, debug
+the code/RLS path; only discuss rotation if the owner asks or you have
+fresh proof the deployed key is invalid.
 
 ## Decision tree
 
