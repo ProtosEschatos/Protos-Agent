@@ -4,7 +4,7 @@ name: Protos-Web
 site: https://www.protosweb.eu
 repo: https://github.com/ProtosEschatos/Protos-Web
 status: active
-last_updated: 2026-07-20
+last_updated: 2026-07-22
 ---
 
 # Protos-Web
@@ -65,7 +65,7 @@ src/lib/ai/providers.ts              # DeepSeek + opcionalno Gemini
 
 ### Dashboard sekcije
 1. **Sadržaj** — Blog (`blog_posts`), Portfolio (`portfolio_items`) — CRUD preko Supabase service role
-2. **Inbox** — `/admin/inbox`: Zoho IMAP (`dario.admin@protosweb.eu`), Gmail studio (`protoswebmark23@gmail.com`), Martina placeholder + kontakt forma (`contacts`)
+2. **Inbox** — `/admin/inbox`: Zoho IMAP (`dario.admin@protosweb.eu`) + Martina kad `MARTINA_IMAP_*` (Gmail studio **uklonjen** PR #54–#55) + kontakt forma (`contacts`)
 3. **Notifikacije** — upiti 7d, pretplatnici, DNS upozorenja, CMS status
 4. **Platforme** — Cloudflare, Vercel, Supabase, Resend, Brevo, GitHub, live site
 5. **Društvene mreže / freelance** — `src/lib/config/team-profiles.ts`; re-export `src/lib/config/social-links.ts` (`pending: true`, `href: '#'` dok nema URL)
@@ -101,7 +101,7 @@ src/lib/ai/providers.ts              # DeepSeek + opcionalno Gemini
 | `KEEP_ALIVE_SECRET` | Supabase + GitHub cron | — |
 
 **Zoho IMAP:** `ZOHO_IMAP_*` na Vercelu — čita inbox u `/admin/inbox`.  
-**Gmail studio IMAP:** `GMAIL_STUDIO_IMAP_*` na Vercelu — `protoswebmark23@gmail.com`.  
+**Gmail studio:** **REMOVED** 2026-07-22 (PR #54–#55) — ne vraćati; obriši leftover `GMAIL_STUDIO_*` s Vercela ručno. Learning: `protos-web-gmail-studio-removed`.  
 **Martina IMAP:** `MARTINA_IMAP_*` (kad `martina.admin@protosweb.eu` bude live).  
 **Stripe donacije (LIVE 2026-07-11):** vidi gore.  
 **Admin UI (Console v3.0, `3c039ed`):** referenca `ProtosEschatos/Google-AI-Studio-Github-Connect`; `src/styles/admin-console.css`; `docs/admin-console.md`.
@@ -377,6 +377,19 @@ Sesija: `memory/sessions/2026-07-10-incident-recovery.md`
 - [ ] Upisati prave URL-ove u `src/lib/config/team-profiles.ts` (TikTok, GoLance, Upwork, studio Facebook…)
 - [ ] Opcionalno: Turnstile, Upstash, Brevo list ID
 
+## Brand mark I'M (2026-07-22)
+
+**Nalog (tvrdo):** slova **I ’ M** + efekti s Desktop referenci — **ne redizajn**.
+- **I** = cyan glow + particle swirl (M-ref)
+- **M** = metallic chrome + light-burst (R-ref)
+- Putanje: `src/components/ui/ImLogo.tsx`, `public/brand/`, favicon SVG/PNG
+- Arhitektura: brand UI → **Vercel `public/`**; CMS tekst → Supabase; veliki upload → Storage
+- Animacija u React/Framer (`ImLogo`); CSS u SVG-as-`<img>` **ne radi**
+- Google SERP favicon = cache lag; PNG 48px postoji — ne thrashati zbog SERP-a
+- PR lanac #52–#61 = greške (kriva slova / improv); **#62 merged** (effects only + text glyphs)
+- Learnings: `protos-web-brand-mark-effects-not-redesign`, `protos-web-brand-assets-vercel-public`
+- Sesija: `memory/sessions/2026-07-22-07-im-logo-gmail-memory-dump.md`
+
 ## Korisnik
 
 - GitHub: `@ProtosEschatos`
@@ -386,6 +399,9 @@ Sesija: `memory/sessions/2026-07-10-incident-recovery.md`
 - **Push mora završiti live na Vercelu** — ne samo GitHub
 - **SEO ambicija:** #1 za `protos` na Googleu — entity layer postavljen; off-page i vrijeme ključni
 - Jako osjetljiv na regresije nakon promjena; preferira revert na poznato dobro stanje
+- **Ne izmišljati UI / logo** — slijedi reference i eksplicitan nalog; improvizacija = fail
+- Ship preko **PR + merge**; `origin/main` = SoT; ne `vercel env pull` bez odobrenja
+- Gmail IMAP **zauvijek van** dok eksplicitno ne zatraži povratak
 
 ## 2026-07-17 → 19 (historijski) — Vue eksperiment i povratak
 
@@ -518,8 +534,11 @@ Nove rute / tablice (sve pushano):
 
 - [ ] **Osvježi `SUPABASE_SERVICE_ROLE_KEY` na Vercelu** (PostgREST 401 — createSession/revoke/writes)
 - [ ] Obriši dead `SENTRY_*` env vars s Vercela
-- [ ] Dizajn dorada (user čeka)
-- [ ] Locale drift — većim dijelom backfillan isti dan; re-check ako treba
+- [ ] Obriši leftover `GMAIL_STUDIO_*` s Vercela (kod već clean)
+- [ ] I'M logo: ako user nije zadovoljan liveom — **samo** pojačaj efekte / blizinu referenci, **bez** novih slova (sesija 07)
+- [ ] Showcase joystick (#58) — verified u PR; re-check mobile ako treba
+- [ ] SR blogovi + `localePrefix: 'never'` — **STOP** dok user ponovno ne zatraži (0 `sr` postova u DB kad prekinuto)
+- [ ] Locale drift — većim dijelom backfillan; re-check ako treba
 - [ ] `.env.example` backfill s novijim env vars
 - [ ] Supabase advisor WARN-ovi (pg_net, public bucket listing, intentional anon SECURITY DEFINER RPCs)
 - [ ] Rotacija tajni iz historijskih transkripata (samo ako user zatraži — ne smarati)
