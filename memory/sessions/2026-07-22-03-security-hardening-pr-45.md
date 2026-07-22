@@ -231,9 +231,18 @@ pre-check (throw prevention). Import `node:crypto`.
   redeploy.
 - [ ] **User setup — Upstash Redis**: kreirati DB (free tier je dovoljan),
   dodati `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` u Vercel env.
-- [ ] **User setup — Cloudflare orange-cloud**: prebaciti sve `protosweb.eu`
-  DNS record-e sa DNS-only (siva) na Proxied (narančasta). Enable Bot
-  Fight Mode + WAF Managed Rules (OWASP) + rate-limit rule na `/api/*`.
+- [ ] ~~**User setup — Cloudflare orange-cloud**: prebaciti sve `protosweb.eu`
+  DNS record-e sa DNS-only (siva) na Proxied (narančasta).~~
+  **POVUČENO 2026-07-22 (03:36)** — user javio da CF proxy na Vercel-hosted
+  apex konflikte sa Vercel Domain redirect layer-om (isti obrazac kao
+  `nextjs-vercel-domain-redirect-conflicts.md` incident, samo drugi
+  actor). Pravilo: `protosweb.eu` DNS records ostaju DNS-only (siva),
+  ne Proxied. Vidi:
+  - Novi learning: [`nextjs-vercel-cf-proxy-forbidden`](../learnings/nextjs-vercel-cf-proxy-forbidden.md)
+  - Retract sesija: [`2026-07-22-04`](2026-07-22-04-cf-proxy-retract-and-konfigurator-open.md)
+  Alternativa za "WAF-like" zaštitu bez CF proxy-a: Vercel Firewall
+  (built-in), Vercel Bot Management (paid), ili in-app rate-limit
+  koji je već sređen (Upstash iz Blok 2).
 - [ ] **User setup — Secret rotation**: rotirati sve tajne env vars
   koje su ikad postojale lokalno (`ADMIN_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`,
   `SENTRY_AUTH_TOKEN`, svi AI provider keys). Nova session model neće
