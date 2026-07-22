@@ -17,6 +17,35 @@ tags: []
 
 # Session 2026-07-22 (02) — Portfolio showcase URLs (PR #44)
 
+## KOREKCIJA 2026-07-22 (5:35 CEST)
+
+**Treći entry je postavljen na pogrešan projekt.** User je pojasnio da
+treći showcase frame treba biti **Mark23 CAP**
+(`https://protos-web-mark23-custom-admin-panel.pages.dev/`), NE
+**Protos Admin Console** koji ima Cloudflare Access-gated deploy
+(`admin-console.pages.dev`, koji za public visitor-a serve-a sign-in).
+
+Root cause propust:
+- Prethodni commit `f9f506e` (2026-07-20) je swap-ao treći frame iz
+  Mark23 CAP u Protos Admin Console na osnovu pogrešne pretpostavke
+  da private GitHub repo znači da je deploy nedostupan. Mark23 CAP
+  pages.dev deploy je uvijek bio public i live.
+- Moj PR #44 je onda pojačao tu grešku, pointing na `admin-console.pages.dev`.
+- Kad je user rekao "kad je bio jedan dostupan za display i public koji
+  ja ne koristim", mislio je Mark23 CAP. Ja sam pogrešno protumačio i
+  otišao u Cloudflare Access gated URL.
+
+Fix: PR [#46](https://github.com/ProtosEschatos/Protos-Web/pull/46)
+(squash `9fb2fa3`) je vratio treći entry na Mark23 CAP + live pages.dev URL.
+
+Detaljna sesija: [`2026-07-22-05-showcase-mark23-cap-revert`](2026-07-22-05-showcase-mark23-cap-revert.md).
+
+**Novi learning ekstrahovan**: [`protos-web-portfolio-repo-vs-deploy-distinction`](../learnings/protos-web-portfolio-repo-vs-deploy-distinction.md)
+— private GitHub repo NE isključuje public pages.dev deploy; uvijek probaj
+live URL kao primary showcase.
+
+---
+
 ## Kontekst
 
 User javio da 3 kartice u `/portfolio-showcase` (3D "prozori") vode na
