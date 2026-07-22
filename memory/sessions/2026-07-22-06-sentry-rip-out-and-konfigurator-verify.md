@@ -13,6 +13,7 @@ learnings:
   - protos-web-error-boundary-self-contained
   - protos-web-admin-session-edge-anon-rpc
   - protos-web-use-server-no-client-constants
+  - github-remote-main-source-of-truth
 topics:
   - sentry
   - sentry-removed
@@ -68,6 +69,7 @@ nije array. Premješteno u `src/lib/admin-assets-types.ts`.
 
 ## Otvoreno
 
+- [x] Supabase Preview stamp drift (`42048` vs `42111`) — fixed PR #51 (`0b296b7`)
 - [ ] **Rotirati / osvježiti `SUPABASE_SERVICE_ROLE_KEY` na Vercelu** —
   PostgREST i dalje vraća 401 na taj key. Verify/login-gate više ne ovise
   o njemu, ali `createSession`, revoke, inbox counts, asset writes JOŠ
@@ -75,6 +77,12 @@ nije array. Premješteno u `src/lib/admin-assets-types.ts`.
   DB session može pasti.
 - [ ] Obriši dead `SENTRY_*` / `NEXT_PUBLIC_SENTRY_DSN` iz Vercel dashboarda
   (harmless dead entries).
+
+## Nauk (force)
+
+**GitHub remote = source of truth.** MCP apply bez usklađivanja lokalnog
+stamp-a sa `list_migrations` = Preview crven. Learning:
+[`github-remote-main-source-of-truth`](../learnings/github-remote-main-source-of-truth.md).
 
 ## Reference
 

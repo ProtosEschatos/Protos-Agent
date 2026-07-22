@@ -121,6 +121,17 @@ They are **not required reading**; the golden rule (§1) is.
 
 ## 7. Constraints (universal)
 
+- **GitHub `origin/main` is the source of truth** for every ProtosEschatos
+  repo (code + migrations). Local workspace is a checkout, not authority.
+  Before inventing timestamps, filenames, or “what we applied”, run
+  `git fetch` + compare to `origin/main` and (for Supabase)
+  `list_migrations`. Never invent a local migration stamp and hope it
+  matches remote later — that is what broke Supabase Preview on 2026-07-22
+  (`42048` local vs `42111` remote).
+- **Supabase MCP `apply_migration`**: after apply, immediately
+  `list_migrations`, then rename/commit the local SQL file to the **exact
+  remote version stamp** before push. Same rule already in
+  `memory/projects/protos-web.md` (Migration lock) — obey it every time.
 - **Do NOT commit local IDE config** (`kilo.json`, `.cursor/`, `.vscode/`) —
   these are personal and gitignored.
 - **Do NOT modify agent definition files** (`agents/*.md`, `skills/*/SKILL.md`,

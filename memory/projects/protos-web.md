@@ -394,7 +394,11 @@ Sesija: `memory/sessions/2026-07-10-incident-recovery.md`
 Detalji tog perioda: `sessions/2026-07-17-*.md`, `sessions/2026-07-18-*.md`, `sessions/2026-07-19-*.md`.
 
 **Naslijeđeni patterni koje treba držati u Next verziji:**
-- **Migration lock**: MCP `apply_migration` UVIJEK popraćen SQL commitom u `supabase/migrations/` s istim version stamp-om. CI guard `scripts/assert-migration-history.sh` (portat iz Vue verzije kad zatreba).
+- **GitHub `origin/main` = source of truth** — lokalni workspace nije autoritet.
+  Vidi learning `github-remote-main-source-of-truth.md`.
+- **Migration lock**: MCP `apply_migration` → odmah `list_migrations` → lokalni
+  SQL fajl **MORA** nositi **isti** version stamp kao remote prije commit/push.
+  (Prekršeno 2026-07-22: lokalni `42048` vs remote `42111` → Preview fail → PR #51.)
 - **Placeholder secrets ban**: `scripts/check-env.mjs` mora fail-at ako env sadrži `placeholder`.
 - **Migration duplication**: user je jako osjetljiv na duplicirane migracije (svjedok prošlih incidenata). Uvijek provjeriti `list_migrations` prije `apply_migration`.
 - **Rotacija tajni**: u transkriptima iz tog perioda pojavljivale su se doslovne vrijednosti CF API token-a, R2 keys, admin lozinke i Supabase anon key-a. **Preporuka:** rotirati sve prije daljnjeg rada (novi CF token, novi R2 keys, novi Supabase anon key, nova admin lozinka).
