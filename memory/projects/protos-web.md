@@ -532,8 +532,9 @@ Nove rute / tablice (sve pushano):
 
 ### Ostalo otvoreno (2026-07-22+)
 
-- [x] Lokalni 3D toolchain (Krita Flatpak + GLTF CLI + Blender numpy fix) — sesija `2026-07-22-08`
-- [ ] **Osvježi `SUPABASE_SERVICE_ROLE_KEY` na Vercelu** (PostgREST 401 — createSession/revoke/writes)
+- [x] Lokalni 3D toolchain (Krita Flatpak + GLTF CLI + Blender numpy fix) — sesija `2026-07-22-08` (host tooling; **nije** fix za online konfigurator)
+- [ ] **Online konfigurator** — PR #64: GLB proxy + CSP. Još treba owner: osvježi `SUPABASE_SERVICE_ROLE_KEY` + postavi `SKETCHFAB_API_TOKEN` / `POLY_PIZZA_API_KEY` (ili vault)
+- [ ] **Osvježi `SUPABASE_SERVICE_ROLE_KEY` na Vercelu** (PostgREST 401 — createSession/revoke/writes/assets/vault)
 - [ ] Obriši dead `SENTRY_*` env vars s Vercela
 - [ ] Obriši leftover `GMAIL_STUDIO_*` s Vercela (kod već clean)
 - [ ] I'M logo: ako user nije zadovoljan liveom — **samo** pojačaj efekte / blizinu referenci, **bez** novih slova (sesija 07)
