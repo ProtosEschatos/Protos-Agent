@@ -131,6 +131,16 @@ They are **not required reading**; the golden rule (§1) is.
 - **Never mention alternative AI tools** to the user unless they ask.
 - **Environment defaults** — assume Linux (user runs Linux Mint Cinnamon).
   Editor is VS Codium; extensions come from Open VSX only.
+- **Error boundaries (`error.tsx` / `global-error.tsx` / client boundaries)** —
+  before editing, ensure the file has **no** top-level
+  `import * as Sentry`, `useTranslations`, `useLocale`, or any other
+  context-dependent import. Boundaries must render with plain React +
+  plain `<a href>` only. See learning
+  `memory/learnings/protos-web-error-boundary-self-contained.md`.
+- **`'use server'` modules** — never import non-async constants/arrays into
+  Client Components from those files (they are not real values on the
+  client). Put shared constants in `src/lib/*-types.ts`. See
+  `memory/learnings/protos-web-use-server-no-client-constants.md`.
 
 ---
 
@@ -151,7 +161,7 @@ Vercel / Supabase, do not just work around it. Do all three:
 
 ## 9. Meta
 
-- **Last audited:** 2026-07-20 (see `memory/sessions/2026-07-20-*.md` for the
-  audit that produced this rewrite).
+- **Last audited:** 2026-07-22 (Sentry removed; error-boundary + use-server
+  rules added — see `memory/sessions/2026-07-22-06-*.md`).
 - **Owner:** Dario Imširović (`dario.admin@protosweb.eu`).
 - **Repo:** [ProtosEschatos/Protos-Agent](https://github.com/ProtosEschatos/Protos-Agent).

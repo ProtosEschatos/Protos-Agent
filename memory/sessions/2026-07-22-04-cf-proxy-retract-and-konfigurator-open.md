@@ -198,3 +198,11 @@ mount):
   `memory/sessions/2026-07-20-09-configurator-assets-crash.md`
 - CF cache poison prethodni incident:
   `memory/sessions/2026-07-19-migration-lock-cf-cache-poison.md`
+
+## CLOSE-OUT 2026-07-22 (kasnije isti dan)
+
+Konfigurator white-screen **fixed** — vidi
+[`2026-07-22-06`](2026-07-22-06-sentry-rip-out-and-konfigurator-verify.md)
+(PRs #47–#50: Sentry rip-out, anon session RPC, ActivityBadge, asset
+categories out of `use server`).
+

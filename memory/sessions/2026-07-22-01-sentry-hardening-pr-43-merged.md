@@ -15,6 +15,17 @@ topics:
 tags: []
 ---
 
+---
+
+## RETRACTED / SUPERSEDED 2026-07-22
+
+**Sentry uklonjen u potpunosti** (PR #47, squash `5d046b6`). Integracija,
+DSN usage, Replay, ignoreErrors — više nisu u kodu. Vidi close-out sesiju
+[`2026-07-22-06`](2026-07-22-06-sentry-rip-out-and-konfigurator-verify.md).
+Zadrži ovaj fajl samo kao historiju odluke, ne kao aktivan runbook.
+
+---
+
 # Session 2026-07-22 (01) — Sentry hardening PR #43 merged
 
 ## Kontekst

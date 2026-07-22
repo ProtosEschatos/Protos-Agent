@@ -21,6 +21,14 @@ topics:
 tags: []
 ---
 
+## RETRACTED / SUPERSEDED 2026-07-22
+
+**Sentry uklonjen u potpunosti** (PR #47). Vidi close-out
+[`2026-07-22-06`](2026-07-22-06-sentry-rip-out-and-konfigurator-verify.md).
+Ne koristi ove korake kao aktivan runbook.
+
+
+
 # Session 2026-07-20 — Adopt Sentry properly (PR #42, merged)
 
 ## Kontekst
